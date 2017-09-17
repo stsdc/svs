@@ -1,6 +1,7 @@
 import socket
+import log
 
 if (socket.gethostname() == 'main_unit'):
-    print("This is main unit")
+    import server
 else:
-    print("This is slave unit")
+    import client
