@@ -2,31 +2,55 @@ from log import logger
 import socket
 import sys
 
-HOST = ''   # Symbolic name, meaning all available interfaces
-PORT = 8888 # Arbitrary non-privileged port
+def handle(connection, address):
+    try:
+        logger.debug("Connected %r at %r", connection, address)
+        while True:
+            data = connection.recv(1024)
+            if data == "":
+                logger.debug("Socket closed remotely")
+                break
+            logger.debug("Received data %r", data)
+            connection.sendall(data)
+            logger.debug("Sent data")
+    except:
+        logger.exception("Problem handling request")
+    finally:
+        logger.debug("Closing socket")
+        connection.close()
 
-logger.info("Initializing Main Unit")
+class Server(object):
+    def __init__(self, hostname, port):
+        self.hostname = hostname
+        self.port = port
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-logger.info("Socket created")
+    def start(self):
+        self.logger.debug("listening")
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.bind((self.hostname, self.port))
+        self.socket.listen(1)
 
-#Bind socket to local host and port
-try:
-    s.bind((HOST, PORT))
-except socket.error as msg:
-    logger.error('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
-    sys.exit()
+        while True:
+            conn, address = self.socket.accept()
+            self.logger.debug("Got connection")
+            process = multiprocessing.Process(target=handle, args=(conn, address))
+            process.daemon = True
+            process.start()
+            self.logger.debug("Started process %r", process)
 
-logger.info('Socket bind complete')
+if __name__ == "__main__":
+    logger.debug("Initializing %s", socket.gethostname())
 
-#Start listening on socket
-s.listen(10)
-logger.info('Socket now listening')
-
-#now keep talking with the client
-while 1:
-    #wait to accept a connection - blocking call
-    conn, addr = s.accept()
-    logger.info('Connected with ' + addr[0] + ':' + str(addr[1]))
-
-s.close()
+    server = Server("", 9000)
+    try:
+        logging.info("Listening")
+        server.start()
+    except:
+        logging.exception("Unexpected exception")
+    finally:
+        logging.info("Shutting down")
+        for process in multiprocessing.active_children():
+            logging.info("Shutting down process %r", process)
+            process.terminate()
+            process.join()
+logging.info("All done")
