@@ -26,10 +26,10 @@ class Server(object):
         self.port = port
 
     def start(self):
-        self.logger.debug("listening")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((self.hostname, self.port))
         self.socket.listen(1)
+        logger.info("Listening")
 
         while True:
             conn, address = self.socket.accept()
@@ -44,14 +44,13 @@ logger.debug("Initializing %s", socket.gethostname())
 
 server = Server("", 9000)
 try:
-    logging.info("Listening")
     server.start()
 except:
-    logging.exception("Unexpected exception")
+    logger.exception("Unexpected exception")
 finally:
-    logging.info("Shutting down")
+    logger.info("Shutting down")
     for process in multiprocessing.active_children():
-        logging.info("Shutting down process %r", process)
+        logger.info("Shutting down process %r", process)
         process.terminate()
         process.join()
-    logging.info("All done")
+    logger.info("All done")
