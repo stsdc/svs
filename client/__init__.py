@@ -11,4 +11,4 @@ if __name__ == "__main__":
     sock.sendall(data)
     result = sock.recv(1024)
     print result
-sock.close()
+    sock.close()

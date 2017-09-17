@@ -1,6 +1,7 @@
 from log import logger
 import socket
 import sys
+import multiprocessing
 
 def handle(connection, address):
     try:
@@ -38,19 +39,19 @@ class Server(object):
             process.start()
             self.logger.debug("Started process %r", process)
 
-if __name__ == "__main__":
-    logger.debug("Initializing %s", socket.gethostname())
+# if __name__ == "__main__":
+logger.debug("Initializing %s", socket.gethostname())
 
-    server = Server("", 9000)
-    try:
-        logging.info("Listening")
-        server.start()
-    except:
-        logging.exception("Unexpected exception")
-    finally:
-        logging.info("Shutting down")
-        for process in multiprocessing.active_children():
-            logging.info("Shutting down process %r", process)
-            process.terminate()
-            process.join()
-logging.info("All done")
+server = Server("", 9000)
+try:
+    logging.info("Listening")
+    server.start()
+except:
+    logging.exception("Unexpected exception")
+finally:
+    logging.info("Shutting down")
+    for process in multiprocessing.active_children():
+        logging.info("Shutting down process %r", process)
+        process.terminate()
+        process.join()
+    logging.info("All done")
