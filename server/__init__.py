@@ -33,11 +33,11 @@ class Server(object):
 
         while True:
             conn, address = self.socket.accept()
-            self.logger.debug("Got connection")
+            logger.debug("Got connection")
             process = multiprocessing.Process(target=handle, args=(conn, address))
             process.daemon = True
             process.start()
-            self.logger.debug("Started process %r", process)
+            logger.debug("Started process %r", process)
 
 # if __name__ == "__main__":
 logger.debug("Initializing %s", socket.gethostname())
