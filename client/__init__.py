@@ -10,10 +10,10 @@ data = {
   'children': ['Susie', 'Mike', 'Philip']
 }
 try:
-    client = Client()
-    client.connect("10.0.0.1", 50000)
+    client = Client("10.0.0.1", 50000)
     client.send(data)
     response = client.recv()
+    print response
     client.close()
 except socket.error, ex:
-     print ex
+     logger.error(ex)
