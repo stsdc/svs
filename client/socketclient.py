@@ -2,12 +2,15 @@ import socket
 import socket
 import json
 import sys
+from log import logger
+
 
 class Client(object):
 
     socket = None
     def __init__(self, host, port):
         self.socket = socket.socket()
+        self.socket.settimeout(5)
         self.socket.connect((host, port))
 
     def __del__(self):
@@ -15,11 +18,11 @@ class Client(object):
 
     def send(self, data):
         if not self.socket:
-            raise Exception('You have to connect first before sending data')
+            logger.error(('You have to connect first before sending data')
         try:
             serialized = json.dumps(data)
         except (TypeError, ValueError), e:
-            logger.exception('You can only send JSON-serializable data')
+            logger.error('You can only send JSON-serializable data')
         # send the length of the serialized data first
         self.socket.send('%d\n' % len(serialized))
         # send the serialized data
@@ -28,7 +31,7 @@ class Client(object):
 
     def recv(self):
         if not self.socket:
-            raise Exception('You have to connect first before receiving data')
+            logger.error(('You have to connect first before receiving data')
         length_str = ''
         char = self.socket.recv(1)
         while char != '\n':
@@ -45,7 +48,7 @@ class Client(object):
         try:
             deserialized = json.loads(view.tobytes())
         except (TypeError, ValueError), e:
-            logger.exception('Data received was not in JSON format', e)
+            logger.error(('Data received was not in JSON format', e)
         return deserialized
 
     def recv_and_close(self):
