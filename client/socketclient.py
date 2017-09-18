@@ -1,3 +1,8 @@
+import socket
+import socket
+import json
+import sys
+
 class Client(object):
 
     socket = None
@@ -13,13 +18,37 @@ class Client(object):
     def send(self, data):
         if not self.socket:
             raise Exception('You have to connect first before sending data')
-        _send(self.socket, data)
+        try:
+            serialized = json.dumps(data)
+        except (TypeError, ValueError), e:
+            logger.exception('You can only send JSON-serializable data')
+        # send the length of the serialized data first
+        self.socket.send('%d\n' % len(serialized))
+        # send the serialized data
+        self.socket.sendall(serialized)
         return self
 
     def recv(self):
         if not self.socket:
             raise Exception('You have to connect first before receiving data')
-        return _recv(self.socket)
+        length_str = ''
+        char = self.socket.recv(1)
+        while char != '\n':
+            length_str += char
+            char = self.socket.recv(1)
+        total = int(length_str)
+        # use a memoryview to receive the data chunk by chunk efficiently
+        view = memoryview(bytearray(total))
+        next_offset = 0
+        while total - next_offset > 0:
+            recv_size = self.socket.recv_into(view[next_offset:],
+                                              total - next_offset)
+            next_offset += recv_size
+        try:
+            deserialized = json.loads(view.tobytes())
+        except (TypeError, ValueError), e:
+            logger.exception('Data received was not in JSON format', e)
+        return deserialized
 
     def recv_and_close(self):
         data = self.recv()

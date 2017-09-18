@@ -1,6 +1,6 @@
 from log import logger
 import socket
-form socketclient import Client
+from socketclient import Client
 
 logger.debug("Initializing %s", socket.gethostname())
 
@@ -9,8 +9,11 @@ data = {
   'age': 45,
   'children': ['Susie', 'Mike', 'Philip']
 }
-client = Client()
-client.connect("10.0.0.1", 9000)
-client.send(data)
-response = client.recv()
-client.close()
+try:
+    client = Client()
+    client.connect("10.0.0.1", 50000)
+    client.send(data)
+    response = client.recv()
+    client.close()
+except socket.error, ex:
+     print ex
