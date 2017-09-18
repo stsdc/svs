@@ -16,5 +16,5 @@ logger.debug("Initializing Main Unit")
 #     logger.info("Shutting down")
 #     server.close()
 
-s = Server()
-s.run()
+server = Server("", 50000)
+server.run()

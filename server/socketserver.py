@@ -3,11 +3,13 @@ import socket
 import sys
 import threading
 import json
+from log import logger
+
 
 class Server:
-    def __init__(self):
-        self.host = ''
-        self.port = 50000
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
         self.backlog = 2
         self.size = 1024
         self.server = None
@@ -18,10 +20,11 @@ class Server:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.bind((self.host,self.port))
             self.server.listen(self.backlog)
+            logger.info ("Listening...")
         except socket.error, (value,message):
             if self.server:
                 self.server.close()
-            print "Could not open socket: " + message
+            logger.exception ("Could not open socket: " + message)
             sys.exit(1)
 
     def run(self):
@@ -35,9 +38,9 @@ class Server:
 
                 if s == self.server:
                     # handle the server socket
-                    c = Client(self.server.accept())
-                    c.start()
-                    self.threads.append(c)
+                    client = Client(self.server.accept())
+                    client.start()
+                    self.threads.append(client)
 
                 elif s == sys.stdin:
                     # handle standard input
@@ -47,8 +50,8 @@ class Server:
         # close all threads
 
         self.server.close()
-        for c in self.threads:
-            c.join()
+        for client in self.threads:
+            client.join()
 
 class Client(threading.Thread):
     def __init__(self,(client,address)):
@@ -56,6 +59,7 @@ class Client(threading.Thread):
         self.client = client
         self.address = address
         self.size = 1024
+        self.daemon = True
 
     def run(self):
         running = 1
