@@ -2,7 +2,7 @@ from log import logger
 import socket
 from time import sleep
 from socketclient import Client
-
+from vision import MarkerDetector
 logger.debug("Initializing %s", socket.gethostname())
 
 data = {
@@ -10,21 +10,24 @@ data = {
   'age': 45,
   'children': ['Susie', 'Mike', 'Philip']
 }
-client = Client("10.0.0.1", 50000)
-while True:
-    try:
-        client.send(data)
-        sleep(1)
-        response = client.recv()
-        if not response:
-            client.close()
-            logger.warning ("No response. Exit...")
-            break
-        logger.debug (response)
-    except socket.error, ex:
-         logger.error(ex)
-         client.close()
-         break
+# client = Client("10.0.0.1", 50000)
+# while True:
+#     try:
+#         client.send(data)
+#         sleep(1)
+#         response = client.recv()
+#         if not response:
+#             client.close()
+#             logger.warning ("No response. Exit...")
+#             break
+#         logger.debug (response)
+#     except socket.error, ex:
+#          logger.error(ex)
+#          client.close()
+#          break
+
+detector = MarkerDetector()
+detector.start()
 
 logger.info("Done")
-client.close()
+# client.close()

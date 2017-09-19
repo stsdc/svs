@@ -18,7 +18,7 @@ class Client(object):
 
     def send(self, data):
         if not self.socket:
-            logger.error(('You have to connect first before sending data')
+            logger.error('You have to connect first before sending data')
         try:
             serialized = json.dumps(data)
         except (TypeError, ValueError), e:
@@ -31,7 +31,7 @@ class Client(object):
 
     def recv(self):
         if not self.socket:
-            logger.error(('You have to connect first before receiving data')
+            logger.error('You have to connect first before receiving data')
         length_str = ''
         char = self.socket.recv(1)
         while char != '\n':
@@ -48,7 +48,7 @@ class Client(object):
         try:
             deserialized = json.loads(view.tobytes())
         except (TypeError, ValueError), e:
-            logger.error(('Data received was not in JSON format', e)
+            logger.error('Data received was not in JSON format', e)
         return deserialized
 
     def recv_and_close(self):

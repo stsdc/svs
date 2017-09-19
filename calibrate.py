@@ -31,21 +31,15 @@ def saveCameraParams(filename,imageSize,cameraMatrix,distCoeffs,totalAvgErr):
 
    print(cameraMatrix)
 
-   calibration = {'camera_matrix': cameraMatrix.tolist(),'distortion_coefficients': distCoeffs.tolist()}
+   calibration = {'camera_matrix': cameraMatrix.tolist(),'dist_coeffs': distCoeffs.tolist()}
 
    calibrationData = dict(
        image_width = imageSize[0],
        image_height = imageSize[1],
        camera_matrix = dict(
-         rows = cameraMatrix.shape[0],
-         cols = cameraMatrix.shape[1],
-         dt = 'd',
          data = cameraMatrix.tolist(),
          ),
        distortion_coefficients = dict(
-           rows = disCoeffs.shape[0],
-           cols = disCoeffs.shape[1],
-           dt = 'd',
            data = disCoeffs.tolist(),
            ),
        avg_reprojection_error = totalAvgErr,
