@@ -26,8 +26,15 @@ class MarkerDetector(Thread):
         self.aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
         self.aruco_params = aruco.DetectorParameters_create()
 
+        self.id = None
         self.rotation = None
         self.translation = None
+
+        # self.marker = {
+        #     "id" : "",
+        #     "rotation" : "",
+        #     "translation" : ""
+        # }
 
         self._calibrate()
 
@@ -36,7 +43,7 @@ class MarkerDetector(Thread):
         while not self.stopped():
             # make it like in a good old movie
             gray = self._achromatise(captured)
-            self.rotation, self.translation = self._detect(gray)
+            self.id, self.rotation, self.translation = self._detect(gray)
 
     def _calibrate(self):
         try:
@@ -64,18 +71,22 @@ class MarkerDetector(Thread):
             gray, self.aruco_dict, parameters=self.aruco_params)
         if ids != None:  # if aruco marker detected
             self._log_markers(ids)
+
             rvec, tvec, _objPoints = aruco.estimatePoseSingleMarkers(
                 corners, self.MARKER_SIZE, self.camera_matrix,
                 self.dist_coeffs)
-            return rvec, tvec
+            return ids[0], rvec[0][0], tvec[0][0]
         else:
-            return None, None
+            return None, None, None
 
     def _log_markers(self, ids):
         marker_string = ""
         for id in ids:
             marker_string += " " + str(id)
         logger.info("Marker(s) id:%s", marker_string)
+
+    def get_marker(self):
+        return self.id, self.rotation, self.translation
 
     def stop(self):
         self._stop_event.set()

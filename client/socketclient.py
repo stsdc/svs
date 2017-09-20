@@ -5,7 +5,7 @@ import sys
 from log import logger
 
 
-class Client(object):
+class SocketClient(object):
 
     socket = None
     def __init__(self, host, port):

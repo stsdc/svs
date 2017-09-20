@@ -2,7 +2,7 @@ import socket
 from time import sleep
 import json
 from log import logger
-from socketclient import Client
+from socketclient import SocketClient
 from vision import MarkerDetector
 
 logger.debug("Initializing %s", socket.gethostname())
@@ -10,31 +10,35 @@ logger.debug("Initializing %s", socket.gethostname())
 # probably move this all data structure to vision?
 # or just retrieve the data in one structure and jsonify here
 # so detector thread wouldn't slowing down
-def jsonify(data):
-    if data is not None:
-        print "translation" + str(detector.translation[0][0])
-        return json.dumps({
-            "is_marker": True,
-            "translation": list(data[0][0])
-        })
-    else:
-        return json.dumps({
-            "is_marker": False
-        })
+def jsonify(marker):
+    return json.dumps(make_dict(marker))
 
+def make_dict(marker):
+    # that's a huge mess. It should handle multiple markers.
+    # marker is a tuple
+    # isApple = True if fruit == 'Apple' else False
+    values = ["", "", ""]
+    if marker[0] is not None:
+        values = [
+            list(marker[0]),
+            list(marker[1]),
+            list(marker[2])
+        ]
+    keys = ['id', 'rotation', 'translation']
+    return dict(zip(keys, values))
 
 detector = MarkerDetector()
 
-client = Client("10.0.0.1", 50000)
+socket_client = SocketClient("10.0.0.1", 50000)
 detector = MarkerDetector()
 detector.start()
 while True:
     try:
-        client.send(jsonify(detector.translation))
+        socket_client.send(jsonify(detector.get_marker()))
         sleep(1)
-        response = client.recv()
+        response = socket_client.recv()
         if not response:
-            client.close()
+            socket_client.close()
             logger.warning ("No response. Exit...")
             detector.stop()
             detector.join()
@@ -42,7 +46,7 @@ while True:
         logger.debug (response)
     except (socket.error, KeyboardInterrupt) as e:
          logger.error(e)
-         client.close()
+         socket_client.close()
          detector.stop()
          detector.join()
          break
@@ -50,4 +54,4 @@ while True:
 
 
 logger.info("Done")
-client.close()
+socket_client.close()
