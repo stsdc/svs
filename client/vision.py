@@ -1,4 +1,5 @@
 import os
+from threading import Thread, Lock, Event, Timer
 
 import cv2
 import numpy as np
@@ -6,27 +7,36 @@ import yaml
 from cv2 import aruco
 from log import logger
 
+
 # camera_matrix = np.array([[1776,0,762],[0,1780,1025],[0,0,1]],dtype=float)  #cx,cy ~= im.shape[1],im.shape[0]
 # dist_coeffs = np.array([[0,0,0,0]],dtype=float) #need to be float type
 
-class MarkerDetector(object):
+class MarkerDetector(Thread):
 
     def __init__(self):
+        super(MarkerDetector, self).__init__()
+        # self.daemon = True
+        self._stop_event = Event()
+
         self.PATH = "calibration.yml"
         self.MARKER_SIZE = 35.5
+
         self.camera_matrix = None
         self.dist_coeffs = None
         self.aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
         self.aruco_params = aruco.DetectorParameters_create()
 
+        self.rotation = None
+        self.translation = None
+
         self._calibrate()
 
-    def start(self):
+    def run(self):
         captured = cv2.VideoCapture(0)
-        while (True):
+        while not self.stopped():
             # make it like in a good old movie
             gray = self._achromatise(captured)
-            print self._detect(gray)
+            self.rotation, self.translation = self._detect(gray)
 
     def _calibrate(self):
         try:
@@ -58,9 +68,17 @@ class MarkerDetector(object):
                 corners, self.MARKER_SIZE, self.camera_matrix,
                 self.dist_coeffs)
             return rvec, tvec
+        else:
+            return None, None
 
     def _log_markers(self, ids):
         marker_string = ""
         for id in ids:
-            marker_string += " " + str(id[0])
-        logger.info("Detected marker(s):%s", marker_string)
+            marker_string += " " + str(id)
+        logger.info("Marker(s) id:%s", marker_string)
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()

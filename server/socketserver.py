@@ -1,7 +1,7 @@
 import select
 import socket
 import sys
-import threading
+from threading import Thread
 import json
 from log import logger
 
@@ -32,7 +32,7 @@ class Server:
         input = [self.server,sys.stdin]
         running = 1
         while running:
-            inputready,outputready,exceptready = select.select(input,[],[])
+            inputready, outputready, exceptready = select.select(input,[],[])
 
             for s in inputready:
 
@@ -48,14 +48,13 @@ class Server:
                     running = 0
 
         # close all threads
-
         self.server.close()
         for client in self.threads:
             client.join()
 
-class Client(threading.Thread):
+class Client(Thread):
     def __init__(self,(client,address)):
-        threading.Thread.__init__(self)
+        Thread.__init__(self)
         self.client = client
         self.address = address
         self.size = 1024
