@@ -17,6 +17,7 @@ class Client(object):
         self.close()
 
     def send(self, data):
+        serialized = ""
         if not self.socket:
             logger.error('You have to connect first before sending data')
         try:
