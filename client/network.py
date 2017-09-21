@@ -11,14 +11,6 @@ class Network(object):
     def __init__(self):
         self.SERVER_SSID = "czesc_piekna"
         self.searchAP()
-        is_connected = self.isConnected()
-        if is_connected != True:
-            connection = self.getConnection()
-            if connection is not False:
-                self.connect(connection)
-            else:
-                logger.warning("Network: Connection is not added")
-            self.isConnected()
 
     def searchAP(self):
         for dev in nm.NetworkManager.GetDevices():
@@ -48,7 +40,7 @@ class Network(object):
         logger.info("Network: Can't find connection %s", self.SERVER_SSID)
         return False
 
-    def connect(self, connection):
+    def activateConnection(self, connection):
         if not nm.NetworkManager.NetworkingEnabled:
             nm.NetworkManager.Enable(True)
         logger.info("Network: Connecting...")
@@ -61,3 +53,13 @@ class Network(object):
                     nm.NetworkManager.ActivateConnection(connection, dev, "/")
                 except dbus.exceptions.DBusException as e:
                     logger.error("Network: Error: %s", e)
+
+    def connect(self):
+        is_connected = self.isConnected()
+        if is_connected != True:
+            connection = self.getConnection()
+            if connection is not False:
+                self.activateConnection(connection)
+            else:
+                logger.warning("Network: Connection is not added")
+            self.isConnected()
