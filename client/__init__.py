@@ -5,13 +5,14 @@ from time import sleep
 from log import logger
 from socketclient import SocketClient
 from vision import MarkerDetector
-
+from network import Network
 class Client(object):
 
     def __init__(self):
         logger.debug("Initializing %s", socket.gethostname())
-        self.marker_detector = MarkerDetector()
-        self.socket_client = SocketClient("10.0.0.1", 50000)
+        Network()
+        # self.marker_detector = MarkerDetector()
+        # self.socket_client = SocketClient("10.0.0.1", 50000)
 
     # probably move this all data structure to vision?
     # or just retrieve the data in one structure and jsonify here
@@ -40,6 +41,7 @@ class Client(object):
 
     def run(self):
         self.marker_detector.start()
+        # check if thread is alive
         while True:
             try:
                 self.socket_client.send(self.jsonify(self.marker_detector.get_marker()))
