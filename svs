@@ -1,0 +1,12 @@
+#!/bin/sh
+SERVER_PYTHON="/home/pi/.virtualenvs/cv/bin/python"
+CLIENT0_PYTHON="/home/unit0/.virtualenvs/cv/bin/python"
+CLIENT1_PYTHON="/home/unit1/.virtualenvs/cv/bin/python"
+# This script uses python interpreter from virtual environment and
+# respects home paths, since home paths are different in server machine
+# and clients.
+for PYTHON in $SERVER_PYTHON $CLIENT0_PYTHON $CLIENT1_PYTHON ; do
+    if [ -f "$PYTHON" ]; then
+        exec "sudo" "$PYTHON" "$0.py" "$@"
+    fi
+done
