@@ -10,7 +10,7 @@ class HotSpot(object):
         self.HOSTAPD_CLI_PATH = '/usr/sbin/hostapd_cli'
         self.IFCONFIG_PATH = '/sbin/ifconfig'
         self.ARP_PATH = '/usr/sbin/arp'
-        self.ARP_FLAGS = '-an'
+        self.ARP_FLAGS = '-a' # n may be added
 
         self.hostapd_interfaces = os.listdir(self.HOSTAPD_CONTROL_PATH)
         self.hostapd_uptime = 0
@@ -45,7 +45,7 @@ class HotSpot(object):
         for sta_output in stas:
 
           for line in sta_output.split('\n'):
-            if re.match(macreg,line):
+            if re.match(macreg, line):
               mac = line
             if re.match('rx_packets',line):
               rx = re.sub('rx_packets=','',line)
@@ -67,27 +67,23 @@ class HotSpot(object):
 
           if iface in self.hostapd_interfaces:
             ip = l[1]
-            hostname = l[2]
+            hostname = l[0]
             mac = l[3]
 
             if re.match('[A-Z0-9][A-Z0-9]:',mac,re.IGNORECASE):
-              self.arp_table[mac] = [ip, hostname, iface]
+                if mac in self.clients:
+                    self.clients[mac].extend([ip, hostname])
+                    self.clients[mac].append(self.get_vendor(mac))
         except:
           pass
 
     def get_vendor(self, mac):
-      try: vendor = EUI(mac).oui.registration().org
-      except: vendor = 'Unknown'
+      try:
+          vendor = EUI(mac).oui.registration().org
+      except:
+          vendor = 'Unknown'
       return vendor
 
     def show(self):
-        for hostapd_iface in self.hostapd_interfaces:
-          iface = self.hostapd_stats[hostapd_iface]
-          print '%s (%s / %s, channel %s): %s Client%s, Started: %s' % ( iface[0], iface[1], self.get_vendor(iface[1]), iface[2],
-              iface[3], 's' if iface[3]>1 else '',
-              pp.naturaltime(self.hostapd_uptime) )
-
-          for mac in self.clients:
-            print '  %s' % self.arp_table[mac][0],
-            print '  [%s / %s]' % (mac, self.get_vendor(mac)),
-        print ': connected %s, %sk in / %sk out' % (pp.naturaltime(self.clients[mac][2]), pp.intcomma(self.clients[mac][0]), pp.intcomma(self.clients[mac][1]))
+        print self.clients
+        print self.hostapd_stats
