@@ -1,6 +1,3 @@
-"""
-Display all visible SSIDs
-"""
 import NetworkManager as nm
 import dbus
 from log import logger
