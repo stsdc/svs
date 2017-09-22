@@ -1,5 +1,3 @@
-#!/home/unit0/.virtualenvs/cv/bin/python
-
 import socket
 import log
 
