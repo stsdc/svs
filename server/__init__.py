@@ -1,5 +1,6 @@
 from socketserver import Server
 from log import logger
+from network import HotSpot
 
 logger.debug("Initializing Main Unit")
 
@@ -16,5 +17,7 @@ logger.debug("Initializing Main Unit")
 #     logger.info("Shutting down")
 #     server.close()
 
-server = Server("", 50000)
-server.run()
+# server = Server("", 50000)
+# server.run()
+
+HotSpot()
