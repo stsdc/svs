@@ -6,7 +6,7 @@ import json
 from log import logger
 
 
-class Server:
+class SocketServer:
     def __init__(self, host, port):
         self.host = host
         self.port = port

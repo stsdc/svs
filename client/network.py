@@ -34,7 +34,7 @@ class Network(object):
             if connection_id == self.SERVER_SSID:
                 logger.info("Network: Found connection %s", connection_id)
                 return connection
-        logger.info("Network: Can't find connection %s", self.SERVER_SSID)
+        logger.warning("Network: Can't find connection %s", self.SERVER_SSID)
         return False
 
     def activateConnection(self, connection):
