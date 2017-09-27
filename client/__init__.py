@@ -4,7 +4,7 @@ from time import sleep
 
 from log import logger
 from socketclient import SocketClient
-from vision import MarkerDetector
+from markerdetector import MarkerDetector
 from network import Network
 class Client(object):
 
