@@ -4,9 +4,10 @@ import os
 
 class Cron(object):
     def __init__(self):
-        USERNAME = os.getlogin()
+        self.USER = os.getlogin()
         self.HOME = os.getenv("HOME")
-        self.cron = CronTab(tabfile='/etc/crontab', user=USERNAME)
+        self.cron = CronTab(tabfile='/etc/crontab', user=self.USER)
+        # self.removeJob()
 
     def setJob(self):
         try:
@@ -14,7 +15,8 @@ class Cron(object):
             job = self.cron.new(command=self.HOME+'/svs/svs', comment='SVSystem')
             job.every_reboot()
             job.enable()
-            self.cron.write()
+            # self.cron.write()
+            self.cron.write_to_user( user=self.USER )
         except BaseException as e:
             logger.error("Cron error: %s", e)
 
@@ -32,7 +34,9 @@ class Cron(object):
         jobs = self.findJobs()
         for job in jobs:
             self.cron.remove( job )
-        self.cron.write()
+        # self.cron.write()
+        self.cron.write_to_user( user=self.USER )
+
 
     def findJobs(self):
         return self.cron.find_comment('SVSystem')
