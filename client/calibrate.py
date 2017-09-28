@@ -75,7 +75,7 @@ class Calibrate(object):
             image_width=self.img_size[0],
             image_height=self.img_size[1],
             camera_matrix=cam_matrix.tolist(),
-            distortion_coefficients=dist_coeffs.tolist(),
+            dist_coeffs=dist_coeffs.tolist(),
             avg_reprojection_error=ret,
         )
 
