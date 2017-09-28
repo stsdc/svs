@@ -1,110 +1,109 @@
-import numpy as np
+import sys
+from threading import Thread
+
 import cv2
 import cv2.aruco as aruco
-import argparse
-import sys
-import yaml
 import numpy as np
-
-dictionary = aruco.Dictionary_get(aruco.DICT_6X6_250)
-
-# * The first and second parameters are the number of squares in X
-# and Y direction respectively.
-# * The third and fourth parameters are the length of the squares and
-# the markers respectively. They can be provided in any unit, having
-# in mind that the estimated pose for this board would be measured
-# in the same units (usually meters are used).
-board = aruco.CharucoBoard_create(5, 7, 0.04, 0.02, dictionary)
-
-# The first parameter is the size of the output image in pixels.
-# In this case 600x500 pixels. If this is not proportional to the
-# board dimensions, it will be centered on the image.
-#
-# The second parameter is the (optional) margin in pixels, so none
-# of the markers are touching the image border. In this case the
-# margin is 10.
-#
-# Finally, the size of the marker border, similarly to drawMarker()
-# function. The default value is 1.
-
-def saveCameraParams(filename,imageSize,cameraMatrix,distCoeffs,totalAvgErr):
-
-   print(cameraMatrix)
-
-   calibration = {'camera_matrix': cameraMatrix.tolist(),'dist_coeffs': distCoeffs.tolist()}
-
-   calibrationData = dict(
-       image_width = imageSize[0],
-       image_height = imageSize[1],
-       camera_matrix = dict(
-         data = cameraMatrix.tolist(),
-         ),
-       distortion_coefficients = dict(
-           data = disCoeffs.tolist(),
-           ),
-       avg_reprojection_error = totalAvgErr,
-   )
-
-   with open(filename,'w') as outfile:
-       yaml.dump(calibrationData,outfile)
+import yaml
 
 
-parser = argparse.ArgumentParser()
+class Calibrate(object):
 
-parser.add_argument("-f", "--file", help="ouput calibration filename",default="calibration.yml")
-parser.add_argument("-s", "--size", help="size of squares in meters",type=float, default="0.035")
-args = parser.parse_args()
+    def __init__(self):
+        self.dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
+        square_length = 40
+        marker_length = 30
+        rows = 7
+        columns = 5
+        self.board = aruco.CharucoBoard_create(
+            columns, rows, square_length, marker_length, self.dict)
+        self.all_ch_corners = []  # all Charuco Corners
+        self.all_ch_ids = []  # all Charuco Ids
+        self.img_size = []
 
-sqWidth = 12 #number of squares width
-sqHeight = 8 #number of squares height
-allCorners = [] #all Charuco Corners
-allIds = [] #all Charuco Ids
-decimator = 0
-#cameraMatrix = np.array([])
-#disCoeffs = np.array([])
-cap = cv2.VideoCapture(0)
+        self.filename = "calibration.yml"
 
-for i in range(30):
-    print "reading %s" % i
-    ret,frame = cap.read()
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    [markerCorners,markerIds,rejectedImgPoints] = cv2.aruco.detectMarkers(img,dictionary)
+        video = Video()
+        video.start()
+        print [video.img]
+        try:
+            while not video.img:
+                continue
+        except ValueError as e:
+            print e
+            self.take_pictures(video.img)
+            self.start()
 
-    if len(markerCorners)>0:
-        [ret,charucoCorners,charucoIds] = cv2.aruco.interpolateCornersCharuco(markerCorners,markerIds,img,board)
-        if charucoCorners is not None and charucoIds is not None and len(charucoCorners)>3 and decimator%3==0:
-            allCorners.append(charucoCorners)
-            allIds.append(charucoIds)
+    def take_pictures(self, img):
+        decimator = 0
+        print "Press space to capture picture"
+        for i in range(30):
+            if cv2.waitKey(0):
+                print "reading %s" % i
+                [markerCorners, markerIds, rejectedImgPoints] = cv2.aruco.detectMarkers(img, self.dict)
 
-        cv2.aruco.drawDetectedMarkers(img,markerCorners,markerIds)
-        cv2.aruco.drawDetectedCornersCharuco(img,charucoCorners,charucoIds)
+                if len(markerCorners) > 0:
+                    [ret, ch_corners, ch_ids] = cv2.aruco.interpolateCornersCharuco(
+                        markerCorners, markerIds, img, self.board)
+                    if ch_corners is not None and ch_ids is not None and len(ch_corners) > 3 and decimator % 3 == 0:
+                        self.all_ch_corners.append(ch_corners)
+                        self.all_ch_ids.append(ch_ids)
 
-        #for corner in allCorners:
-        #    cv2.circle(img,(corner[0][0], corner[0][0]),50,(255,255,255))
+                decimator += 1
+        self.img_size = img.shape
 
-    smallimg = cv2.resize(img,(1024,768))
-    cv2.imshow("frame",smallimg)
-    cv2.waitKey(0) #any key
-    decimator+=1
+    def start(self):
+        try:
+            [ret, cam_matrix, dist_coeffs, rvecs, tvecs] = cv2.aruco.calibrateCameraCharuco(
+                self.all_ch_corners, self.all_ch_ids, self.board, self.img_size, None, None)
+            print "Rep Error:", ret
+            self.saveCameraParams(cam_matrix, dist_coeffs, ret)
 
-imsize = img.shape
-print(imsize)
-#try Calibration
-try:
-    [ret,cameraMatrix,disCoeffs,rvecs,tvecs] = cv2.aruco.calibrateCameraCharuco(allCorners,allIds,board,imsize,None,None)
-    print "Rep Error:" ,ret
-    #np.savez(args.file,ret=ret,mtx=cameraMatrix,dist=disCoeffs,rvecs=rvecs,tvecs=tvecs)
-    saveCameraParams(args.file,imsize,cameraMatrix,disCoeffs,ret)
+        except ValueError as e:
+            print(e)
+        except NameError as e:
+            print(e)
+        except AttributeError as e:
+            print(e)
+        except:
+            print "calibrateCameraCharuco fail:", sys.exc_info()[0]
 
-except ValueError as e:
-    print(e)
-except NameError as e:
-    print(e)
-except AttributeError as e:
-    print(e)
-except:
-    print "calibrateCameraCharuco fail:" , sys.exc_info()[0]
+    def saveCameraParams(self, cam_matrix, dist_coeffs, ret):
+        print(cam_matrix)
 
-print "Press any key on window to exit"
-cv2.waitKey(0) #any key
-cv2.destroyAllWindows()
+        calib_data = dict(
+            image_width=self.img_size[0],
+            image_height=self.img_size[1],
+            camera_matrix=cam_matrix.tolist(),
+            distortion_coefficients=dist_coeffs.tolist(),
+            avg_reprojection_error=ret,
+        )
+
+        with open(self.filename, 'w') as outfile:
+            yaml.dump(calib_data, outfile)
+
+
+class Video(Thread):
+
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.img = []
+
+    def run(self):
+        print "Starting video"
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, frame = cap.read()
+            self.img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+            smallimg = cv2.resize(self.img, (320, 240))
+            cv2.imshow("Calibration", smallimg)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+            # When everything done, release the capture
+        cap.release()
+        cv2.destroyAllWindows()
+
+Calibrate()
+# Video().start()
