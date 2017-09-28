@@ -25,14 +25,12 @@ class Calibrate(object):
 
         video = Video()
         video.start()
-        print [video.img]
-        try:
-            while not video.img:
-                continue
-        except ValueError as e:
-            print e
-            self.take_pictures(video.img)
-            self.start()
+        # wait for video
+        while type(video.img) is not np.ndarray:
+            continue
+        # video is not None, take some pictures!
+        self.take_pictures(video.img)
+        self.start()
 
     def take_pictures(self, img):
         decimator = 0

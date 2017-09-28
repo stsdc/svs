@@ -18,7 +18,7 @@ class MarkerDetector(Thread):
         # self.daemon = True
         self._stop_event = Event()
 
-        self.PATH = "calibration.yml"
+        self.PATH = "client/calibration.yml"
         self.MARKER_SIZE = 30
 
         self.camera_matrix = None
@@ -61,6 +61,7 @@ class MarkerDetector(Thread):
                 logger.debug("Calibrate: Distortion coefficients: %s", yml.get("dist_coeffs"))
         except (IOError) as e:
             logger.error('Calibrate eror: %s', e)
+            logger.error('If there is no calibration.yml try to run calibrate.py')
 
     def _achromatise(self, captured):
         ret, frame = captured.read()
