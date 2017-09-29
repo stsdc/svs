@@ -12,8 +12,10 @@ class Client(object):
     def __init__(self):
         logger.debug("Initializing %s", socket.gethostname())
         Cron().check()
-        Network().connect()
-        MarkerDetector().run()
+        while not Network().connect():
+            sleep(10)
+            continue
+        # MarkerDetector().run()
         # self.marker_detector = MarkerDetector()
         # self.socket_client = SocketClient("10.0.0.1", 50000)
 

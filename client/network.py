@@ -7,7 +7,6 @@ class Network(object):
 
     def __init__(self):
         self.SERVER_SSID = "czesc_piekna"
-        self.searchAP()
 
     def searchAP(self):
         for dev in nm.NetworkManager.GetDevices():
@@ -17,6 +16,8 @@ class Network(object):
                 if (ap.Ssid == self.SERVER_SSID):
                     logger.info('Network: Found server access point: %s %dMHz %d%%',
                                 ap.Ssid, ap.Frequency, ap.Strength)
+                    return True
+        return False
 
     def isConnected(self):
         for connection in nm.NetworkManager.ActiveConnections:
@@ -52,11 +53,15 @@ class Network(object):
                     logger.error("Network: Error: %s", e)
 
     def connect(self):
-        is_connected = self.isConnected()
-        if is_connected != True:
-            connection = self.getConnection()
-            if connection is not False:
-                self.activateConnection(connection)
-            else:
-                logger.warning("Network: Connection is not added")
-            self.isConnected()
+        if(self.searchAP()):
+            is_connected = self.isConnected()
+            if is_connected != True:
+                connection = self.getConnection()
+                if connection is not False:
+                    self.activateConnection(connection)
+                else:
+                    logger.warning("Network: Connection is not added")
+                return self.isConnected()
+        else:
+            logger.warning("Network: No Access Point")
+            return False
