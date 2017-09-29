@@ -25,10 +25,10 @@ class Cron(object):
     def check(self):
         jobs = self.findJobs()
         if not list(jobs):
-            logger.warning("Cron: Check: Job not set. Bad")
+            logger.warning("Cron: Job not set. Bad")
             self.setJob()
         else:
-            logger.info("Cron: Check: Job set and should start on bootup. Good")
+            logger.info("Cron: Job set and should start on bootup. Good")
 
     def removeJob(self):
         jobs = self.findJobs()
