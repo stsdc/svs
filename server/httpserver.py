@@ -1,9 +1,8 @@
 import time
 import BaseHTTPServer
 
-
-HOST_NAME = '0.0.0.0' # !!!REMEMBER TO CHANGE THIS!!!
-PORT_NUMBER = 80 # Maybe set this to 9000.
+HOST_NAME = '0.0.0.0'  # !!!REMEMBER TO CHANGE THIS!!!
+PORT_NUMBER = 80  # Maybe set this to 9000.
 
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -11,17 +10,19 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
         s.end_headers()
+
     def do_GET(s):
         """Respond to a GET request."""
         s.send_response(200)
         s.send_header("Content-type", "text/html")
         s.end_headers()
         s.wfile.write("<html><head><title>Title goes here.</title></head>")
-        s.wfile.write("<body><p>This is a test.</p>")
+        s.wfile.write("<body><p>No siema ;)</p>")
         # If someone went to "http://something.somewhere.net/foo/bar/",
         # then s.path equals "/foo/bar/".
-        s.wfile.write("<p>You accessed path: %s</p>" % s.path)
+        s.wfile.write("<p>@stsdc</p>")
         s.wfile.write("</body></html>")
+
 
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
