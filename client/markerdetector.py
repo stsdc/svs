@@ -18,8 +18,8 @@ class MarkerDetector(Thread):
         # self.daemon = True
         self._stop_event = Event()
 
-        self.PATH = "calibration.yml"
-        self.MARKER_SIZE = 35.5
+        self.PATH = "client/calibration.yml"
+        self.MARKER_SIZE = 30
 
         self.camera_matrix = None
         self.dist_coeffs = None
@@ -61,6 +61,7 @@ class MarkerDetector(Thread):
                 logger.debug("Calibrate: Distortion coefficients: %s", yml.get("dist_coeffs"))
         except (IOError) as e:
             logger.error('Calibrate eror: %s', e)
+            logger.error('If there is no calibration.yml try to run calibrate.py')
 
     def _achromatise(self, captured):
         ret, frame = captured.read()
@@ -69,7 +70,7 @@ class MarkerDetector(Thread):
     def _detect(self, gray):
         corners, ids, rejectedImgPoints = aruco.detectMarkers(
             gray, self.aruco_dict, parameters=self.aruco_params)
-        if ids != None:  # if aruco marker detected
+        if type(ids) is np.ndarray:  # if aruco marker detected
             self._log_markers(ids)
 
             rvec, tvec, _objPoints = aruco.estimatePoseSingleMarkers(

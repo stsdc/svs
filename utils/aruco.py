@@ -4,6 +4,8 @@ import cv2.aruco as aruco
 
 
 cap = cv2.VideoCapture(0)
+# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640);
+# cap.set(cv2.CAP_PROP_FRAME_HEIGHT,480);
 
 while(True):
     # Capture frame-by-frame

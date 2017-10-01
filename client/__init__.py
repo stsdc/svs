@@ -1,16 +1,21 @@
 import json
 import socket
 from time import sleep
-
+from cron import Cron
 from log import logger
 from socketclient import SocketClient
-from vision import MarkerDetector
+from markerdetector import MarkerDetector
 from network import Network
+
 class Client(object):
 
     def __init__(self):
         logger.debug("Initializing %s", socket.gethostname())
-        Network().connect()
+        Cron().check()
+        while not Network().connect():
+            sleep(10)
+            continue
+        # MarkerDetector().run()
         # self.marker_detector = MarkerDetector()
         # self.socket_client = SocketClient("10.0.0.1", 50000)
 
