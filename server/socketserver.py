@@ -24,7 +24,7 @@ class SocketServer:
         except socket.error, (value, message):
             if self.server:
                 self.server.close()
-            logger.exception("Could not open socket: " + message)
+            logger.errror("Could not open socket: " + message)
             sys.exit(1)
 
     def run(self):

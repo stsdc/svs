@@ -1,30 +1,11 @@
-import logging
+import log
 import curses
-from socketserver import Server
-
-import time
-from network import HotSpot
+# import test
+from time import sleep
+from socketserver import SocketServer
+from server import Server
 
 from threading import Thread
-
-class CursesHandler(logging.Handler):
-    def __init__(self, screen):
-        logging.Handler.__init__(self)
-        self.screen = screen
-
-    def emit(self, record):
-        try:
-            msg = self.format(record)
-            screen = self.screen
-            fs = "\n%s"
-            screen.addstr(fs % msg.encode("UTF-8"))
-            screen.refresh()
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            self.handleError(record)
-
-logger = logging.getLogger('myLog')
 
 class UI(Thread):
     def __init__(self):
@@ -37,20 +18,12 @@ class UI(Thread):
             print e
 
 
-
-
-    def setup_log(self, win):
-        mh = CursesHandler(win)
-        formatterDisplay = logging.Formatter('%(asctime)-8s|%(name)-12s|%(levelname)-6s|%(message)-s', '%H:%M:%S')
-        mh.setFormatter(formatterDisplay)
-        logger.addHandler(mh)
-
     def start_ui(self, stdscr):
         stdscr.nodelay(1)
         maxy, maxx = stdscr.getmaxyx()
         begin_x = 2
-        begin_y = maxy - 5
-        height = 5
+        begin_y = maxy - 9
+        height = 9
         width = maxx - 4
         win = curses.newwin(height, width, begin_y, begin_x)
         win.border(0)
@@ -62,11 +35,9 @@ class UI(Thread):
         win.idlok(True)
         win.leaveok(True)
 
-        self.setup_log(win)
+        log.setup_log(win)
 
-        HotSpot()
-        server = Server("", 50000)
-        server.run()
+        Server()
 
         win.getch()
 
@@ -74,7 +45,6 @@ class UI(Thread):
         curses.nocbreak()
         curses.echo()
         curses.endwin()
-
 
 
 
