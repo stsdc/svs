@@ -1,4 +1,5 @@
 # Create a logger object.
+# Taken from https://github.com/VT-SailBOT
 import logging
 import coloredlogs
 import os

@@ -26,16 +26,20 @@ class UI(Thread):
         height = 9
         width = maxx - 4
         win = curses.newwin(height, width, begin_y, begin_x)
-        win.border(0)
-        curses.setsyx(-1, -1)
-        stdscr.addstr("Testing my curses app")
-        stdscr.refresh()
-        win.refresh()
-        win.scrollok(True)
-        win.idlok(True)
-        win.leaveok(True)
 
-        log.setup_log(win)
+        win.immedok(True)
+        curses.setsyx(-1, -1)
+        stdscr.addstr(0,0, "Testing my curses app")
+        stdscr.refresh()
+        win.box()
+        win.addstr(1,1, "Testing my curses app")
+        box2 = win.derwin(height-2, width-2, 1, 1)
+        box2.refresh()
+        box2.scrollok(True)
+        box2.idlok(True)
+        box2.leaveok(True)
+
+        log.setup_log(box2)
 
         Server()
 
