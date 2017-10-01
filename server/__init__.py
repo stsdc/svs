@@ -1,7 +1,7 @@
-from socketserver import Server
+# from socketserver import Server
 from log import logger
 from network import HotSpot
-from ui import UI
+from ui2 import UI
 
 logger.debug("Initializing Main Unit")
 
@@ -22,6 +22,5 @@ logger.debug("Initializing Main Unit")
 # server.run()
 
 UI()
-# HotSpot()
 
-logger.debug("Initializing Main Unit")
+logger.info("Initializing Main Unit")

@@ -35,13 +35,13 @@ class Screen(BaseWidget):
                 colors.colors[type][0]) | getattr(curses, 'A_' + colors.colors[type][3])
 
     def redraw(self, event=None):
-        logging.debug('redraw')
+        #logging.debug('redraw')
         for child in self.childs: child.redraw()
 
     def refresh(self):
-        logging.debug('refresh')
+        #logging.debug('refresh')
         for child in self.childs:
-            logging.debug('child %s' % child.__class__.__name__)
+            #logging.debug('child %s' % child.__class__.__name__)
             child.refresh()
         curses.doupdate()
 

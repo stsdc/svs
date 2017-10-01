@@ -67,7 +67,7 @@ class BaseWidget(object):
             else:
                 q, r = (0, 0)
 
-            logging.debug('Fixed: %i, n: %i, q: %i, r: %i' % (fixed, n, q, r))
+            #logging.debug('Fixed: %i, n: %i, q: %i, r: %i' % (fixed, n, q, r))
             if self.layout == LAYOUT_VERTICAL:
                 start = begy
             else:
@@ -100,11 +100,11 @@ class BaseWidget(object):
 
                 start += dim
 
-        logging.debug('maxy: %i, maxx: %i, begy: %i, begx: %i' % dimensions)
+        #logging.debug('maxy: %i, maxx: %i, begy: %i, begx: %i' % dimensions)
         return dimensions
 
     def get_dimensions(self):
-        logging.debug('%s.get_dimensions' % self.__class__.__name__)
+        #logging.debug('%s.get_dimensions' % self.__class__.__name__)
         if self.parent is None:
             maxy, maxx = self.get_size()
             begy, begx = self.get_beg()
@@ -112,7 +112,7 @@ class BaseWidget(object):
         else:
             dimensions = self.parent.get_child_dimensions(self)
 
-        logging.debug('maxy: %i, maxx: %i, begy: %i, begx: %i' % dimensions)
+        #logging.debug('maxy: %i, maxx: %i, begy: %i, begx: %i' % dimensions)
         return dimensions
 
     def get_pos(self):
@@ -125,29 +125,29 @@ class BaseWidget(object):
         return self.win.getmaxyx()
 
     def redraw(self):
-        logging.debug('%s.redraw' % self.__class__.__name__)
+        #logging.debug('%s.redraw' % self.__class__.__name__)
 
         (maxy, maxx, posy, posx) = self.get_dimensions()
-        logging.debug((maxy, maxx, posy, posx))
+        #logging.debug((maxy, maxx, posy, posx))
         self.win.resize(maxy, maxx)
         self.win.mvwin(posy, posx)
         for child in self.childs: child.redraw()
         self.updated = True
 
     def refresh(self):
-        logging.debug('%s.refresh' % self.__class__.__name__)
+        #logging.debug('%s.refresh' % self.__class__.__name__)
         if self.updated:
-            logging.debug('updated')
+            #logging.debug('updated')
             self.win.noutrefresh()
             self.updated = False
         for child in self.childs: child.refresh()
 
     def move(self, y, x):
-        logging.debug('%s.move %i, %i' % (self.__class__.__name__, y, x))
+        #logging.debug('%s.move %i, %i' % (self.__class__.__name__, y, x))
         self.win.move(y, x)
 
     def write(self, s, attr = None):
-        logging.debug('%s.write %s', self.__class__.__name__, s)
+        #logging.debug('%s.write %s', self.__class__.__name__, s)
         if attr is None: attr = curses.A_NORMAL
         #self.win.addstr(s.encode(self.screen.encoding), attr)
         self.win.addstr(s, attr)
@@ -162,7 +162,7 @@ class BaseWidget(object):
         self.updated = True
 
     def destroy(self):
-        logging.debug('%sdestroy' % self.__class__.__name__)
+        #logging.debug('%sdestroy' % self.__class__.__name__)
         if self.win: del self.win
 
     def register_event(self, event, method):
@@ -172,14 +172,14 @@ class BaseWidget(object):
         if event in self.events:
             self.events[event](event)
             return True
-        logging.debug('Unhandled: %s' % event)
+        #logging.debug('Unhandled: %s' % event)
         return False
 
     def handle_events(self):
         while True:
             c = self.get_char()
             if not c is None:
-                logging.debug('Handling event %s' % c)
+                #logging.debug('Handling event %s' % c)
                 self.send_event(c)
 
 
@@ -187,37 +187,37 @@ class BaseWidget(object):
         self.childs.append(child)
 
     def get_char(self):
-        logging.debug('%s.get_char' % self.__class__.__name__)
+        #logging.debug('%s.get_char' % self.__class__.__name__)
         result = b""
         count = 0
 
         self.screen.refresh()
         while True:
             ch = self.win.getch()
-            logging.debug('ch=%i' % ch)
+            #logging.debug('ch=%i' % ch)
             if ch == -1:
                 return None
             if ch > 255:
                 for attr in dir(curses):
                     if attr.startswith('KEY_') and getattr(curses, attr) == ch:
-                        logging.debug('<%s>' % attr)
+                        #logging.debug('<%s>' % attr)
                         return '<%s>' % attr
-                logging.debug('<%i>' % ch)
+                #logging.debug('<%i>' % ch)
                 return '<%i>' % ch
             result += bytes((ch,))
-            logging.debug(result)
+            #logging.debug(result)
             try:
                 decoded = result.decode(self.screen.encoding)
-                # logging.debug('%s: %s (%i)' % (self.screen.encoding, decoded, ord(decoded)))
+                # #logging.debug('%s: %s (%i)' % (self.screen.encoding, decoded, ord(decoded)))
                 # map control characters
                 if len(decoded) == 1 and ord(decoded) in chars.mappings:
-                    logging.debug('Remap to %s' % chars.mappings[ord(decoded)])
+                    #logging.debug('Remap to %s' % chars.mappings[ord(decoded)])
                     return chars.mappings[ord(decoded)]
                 else:
                     return decoded
             except UnicodeDecodeError as e:
                 count += 1
-                logging.debug('Cannot decode')
+                #logging.debug('Cannot decode')
                 # assumes multibytes characters are less that 4 bytes
                 if count > 4 or e.reason != 'unexpected end of data':
                     return '?'

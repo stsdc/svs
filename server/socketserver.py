@@ -18,21 +18,21 @@ class Server:
     def open_socket(self):
         try:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server.bind((self.host,self.port))
+            self.server.bind((self.host, self.port))
             self.server.listen(self.backlog)
-            logger.info ("Listening...")
-        except socket.error, (value,message):
+            logger.info("Listening...")
+        except socket.error, (value, message):
             if self.server:
                 self.server.close()
-            logger.exception ("Could not open socket: " + message)
+            logger.exception("Could not open socket: " + message)
             sys.exit(1)
 
     def run(self):
         self.open_socket()
-        input = [self.server,sys.stdin]
+        input = [self.server, sys.stdin]
         running = 1
         while running:
-            inputready, outputready, exceptready = select.select(input,[],[])
+            inputready, outputready, exceptready = select.select(input, [], [])
 
             for s in inputready:
 
@@ -52,8 +52,9 @@ class Server:
         for client in self.threads:
             client.join()
 
+
 class Client(Thread):
-    def __init__(self,(client,address)):
+    def __init__(self, (client, address)):
         Thread.__init__(self)
         self.client = client
         self.address = address
@@ -70,6 +71,7 @@ class Client(Thread):
             else:
                 self.client.close()
                 running = 0
+
 
 def _send(socket, data):
     try:

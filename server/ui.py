@@ -1,4 +1,5 @@
-from log import CursesHandler
+from log import CursesHandler, logger
+import logging
 import curses
 from threading import Thread
 from widgets import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel
@@ -31,6 +32,8 @@ class Window(Screen):
 
 class UI(Thread):
     def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
         curses.wrapper(self.start_ui)
 
     def start_ui(self, stdscr):
@@ -42,5 +45,8 @@ class UI(Thread):
         screen.refresh()
 
         screen.run()
-        logger.debug("Initializing Main Unit")
-        CursesHandler(screen).set()
+        handler = CursesHandler(screen)
+        formatterDisplay = logging.Formatter('%(asctime)-8s|%(name)-12s|%(levelname)-6s|%(message)-s', '%H:%M:%S')
+        handler.setFormatter(formatterDisplay)
+        logger.addHandler(handler)
+        logger.info("SKS")

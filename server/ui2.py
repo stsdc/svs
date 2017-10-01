@@ -1,36 +1,81 @@
-import curses
 import logging
-import coloredlogs
-import os
+import curses
+from socketserver import Server
 
-os.environ['COLOREDLOGS_LOG_FORMAT'] ='%(asctime)s.%(msecs)03d %(name)s - %(message)s'
-os.environ['COLOREDLOGS_DATE_FORMAT'] ='%H%M%S'
+import time
+from network import HotSpot
 
-logger = logging.getLogger("Test")
-
-coloredlogs.install(level='DEBUG')
+from threading import Thread
 
 class CursesHandler(logging.Handler):
-    def __init__(self, win, level=logging.DEBUG):
-        logging.Handler.__init__(self, level)
-        self.win = win
+    def __init__(self, screen):
+        logging.Handler.__init__(self)
+        self.screen = screen
 
     def emit(self, record):
-        self.win.addstr(record.getMessage())
-        self.win.refresh()
+        try:
+            msg = self.format(record)
+            screen = self.screen
+            fs = "\n%s"
+            screen.addstr(fs % msg.encode("UTF-8"))
+            screen.refresh()
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
 
-def main(scrn):
+logger = logging.getLogger('myLog')
 
-    handler = CursesHandler(scrn.subwin(5,80, 19,0))
-    logger.addHandler(handler)
+class UI(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.screen = None
+        try:
+            curses.wrapper(self.start_ui)
+        except Exception as e:
+            print e
 
-    win = scrn.subwin(10,80, 0,0)
-
-    for i in range(0,10):
-        curses.delay_output(250)
-        logger.info("Now i = %s", i)
-    win.getch()
 
 
-if __name__ == "__main__":
-    curses.wrapper(main)
+
+    def setup_log(self, win):
+        mh = CursesHandler(win)
+        formatterDisplay = logging.Formatter('%(asctime)-8s|%(name)-12s|%(levelname)-6s|%(message)-s', '%H:%M:%S')
+        mh.setFormatter(formatterDisplay)
+        logger.addHandler(mh)
+
+    def start_ui(self, stdscr):
+        stdscr.nodelay(1)
+        maxy, maxx = stdscr.getmaxyx()
+        begin_x = 2
+        begin_y = maxy - 5
+        height = 5
+        width = maxx - 4
+        win = curses.newwin(height, width, begin_y, begin_x)
+        win.border(0)
+        curses.setsyx(-1, -1)
+        stdscr.addstr("Testing my curses app")
+        stdscr.refresh()
+        win.refresh()
+        win.scrollok(True)
+        win.idlok(True)
+        win.leaveok(True)
+
+        self.setup_log(win)
+
+        HotSpot()
+        server = Server("", 50000)
+        server.run()
+
+        win.getch()
+
+        curses.curs_set(1)
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
+
+
+
+
+

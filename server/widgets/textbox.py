@@ -14,12 +14,12 @@ class TextBox(BaseWidget):
         super(TextBox, self).__init__(parent, SIZE_EXTEND, 1)
 
     def refresh(self):
-        logging.debug('%s.refresh' % self.__class__.__name__)
+        #logging.debug('%s.refresh' % self.__class__.__name__)
         if self.updated:
             self.win.erase()
             padded_text = self.text
             if self.fill:
-                logging.debug('padding: %s' % padded_text)
+                #logging.debug('padding: %s' % padded_text)
                 (y, x) = self.get_size()
                 padded_text += ' ' * (x - len(self.text) - 1)
             (maxy, maxx) = self.get_size()

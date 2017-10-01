@@ -28,7 +28,7 @@ class CommandBar(TextBox):
                 curses.curs_set(0)
                 return cmd
             elif c == '<KEY_LEFT>':
-                logging.debug('left from %i, %i' % (y, x))
+                #logging.debug('left from %i, %i' % (y, x))
                 if x > 1:
                     self.move(y, x-1)
                 else:
