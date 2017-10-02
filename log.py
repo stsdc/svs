@@ -4,10 +4,9 @@ import logging
 import coloredlogs
 import os
 import curses
-
+# coloredlogs.install(level='DEBUG')
 # os.environ['COLOREDLOGS_LOG_FORMAT'] ='%(asctime)s.%(msecs)03d %(name)s - %(message)s'
 # os.environ['COLOREDLOGS_DATE_FORMAT'] ='%H%M%S'
-# os.environ['COLOREDLOGS_LEVEL_STYLES'] ='info=cyan,bold;warning=yellow;error=red;critical=red,bold'
 logger = logging.getLogger("SVSystem")
 
 
@@ -51,7 +50,6 @@ def setup_log(win):
     mh.setFormatter(formatterDisplay)
     logger.addHandler(mh)
 
-# coloredlogs.install(level='DEBUG')
 
 # class Logger:
 #     def __init__(self, module_name, level):

@@ -1,50 +1,53 @@
-from socketserver import SocketServer
-from log import logger
-from hotspot import HotSpot
+from log import logger, setup_log
+import curses
+# import test
 from time import sleep
-
-logger.debug("Initializing Main Unit")
-
-# server = Server("", 8888)
-# try:
-#     while True:
-#         server.accept()
-#         data = server.recv()
-#         # shortcut: data = server.accept().recv()
-#         server.send({'status': 'ok'})
-# except (TypeError, ValueError), e:
-#     logger.exception("Unexpected exception: ", e)
-# finally:
-#     logger.info("Shutting down")
-#     server.close()
-
-# server = Server("", 50000)
-# server.run()
+from socketserver import SocketServer
+from threading import Thread
 
 
-class Server(object):
+class UI():
     def __init__(self):
-        self.socket_server = SocketServer("", 8888)
-        self.waiter()
-
-    def check_connectivity(self):
-        hotspot = HotSpot()
-        if bool(hotspot.clients):
-            for mac in hotspot.clients:
-                logger.info("HotSpot: Connected client: %s, %s, %s", hotspot.clients[mac][4], hotspot.clients[mac][3], hotspot.clients[mac][5])
-            return True
-        else:
-            logger.warning("HotSpot: No clients")
-        return False
-
-    def waiter(self):
-        is_client_connected = False
-        while is_client_connected is not True:
-            sleep(3)
-            is_client_connected = self.check_connectivity()
+        # Thread.__init__(self)
+        # self.daemon = True
+        self.screen = None
         try:
-            self.socket_server.run()
-        except BaseException as e:
-            logger.error("Error when starting server: %s", e)
-            logger.warning("Checking connection and restarting server")
-            self.waiter()
+            curses.wrapper(self.start_ui)
+        except Exception as e:
+            print e
+
+    def start_ui(self, stdscr):
+        stdscr.nodelay(1)
+        maxy, maxx = stdscr.getmaxyx()
+        begin_x = 2
+        begin_y = maxy - 9
+        height = 9
+        width = maxx - 4
+        win = curses.newwin(height, width, begin_y, begin_x)
+
+        # win.immedok(True)
+        curses.setsyx(-1, -1)
+        stdscr.addstr(0, 0, "Testing my curses app")
+        stdscr.refresh()
+        win.box()
+        win.addstr(1, 1, "Testing my curses app")
+        box2 = win.derwin(height - 2, width - 2, 1, 1)
+        win.refresh()
+        box2.refresh()
+        box2.scrollok(True)
+        box2.idlok(True)
+        box2.leaveok(True)
+
+        setup_log(box2)
+
+        socket_server = SocketServer("", 8888)
+        socket_server.start()
+
+        logger.info("SSSS")
+
+        win.getch()
+
+        curses.curs_set(1)
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
