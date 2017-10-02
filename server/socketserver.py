@@ -19,6 +19,7 @@ class SocketServer(Thread):
         self.size = 1024
         self.server = None
         self.threads = []
+        self.running = 1
 
     def open_socket(self):
         try:
@@ -33,11 +34,11 @@ class SocketServer(Thread):
             logger.error("Could not open socket: %s", e)
             sys.exit(1)
 
-    def run(self):
+    def handle_data(self):
+        # maybe remove this select?
         self.open_socket()
         input = [self.server, sys.stdin]
-        running = 1
-        while running:
+        while getattr(self, "do_run", True):
             inputready, outputready, exceptready = select.select(input, [], [])
 
             for s in inputready:
@@ -48,16 +49,18 @@ class SocketServer(Thread):
                     client.start()
                     self.threads.append(client)
 
-                elif s == sys.stdin:
-                    # handle standard input
-                    junk = sys.stdin.readline()
-                    self.join()
-                    running = 0
+    def stop(self):
+        # close all client threads
+        if self.server:
+            self.server.close()
+            logger.warning("SocketServer: Stop")
 
-        # close all threads
-        self.server.close()
-        for client in self.threads:
-            client.join()
+        if self.threads:
+            for client in self.threads:
+                client.join()
+
+        self.do_run = False
+        self.join()
 
     def check_connectivity(self):
         hotspot = HotSpot()
@@ -70,17 +73,17 @@ class SocketServer(Thread):
             logger.warning("HotSpot: No clients")
         return False
 
-    def waiter(self):
+    def run(self):
         is_client_connected = False
         while is_client_connected is not True:
             sleep(3)
             is_client_connected = self.check_connectivity()
         try:
-            self.run()
+            self.handle_data()
         except BaseException as e:
             logger.error("Error when starting server: %s", e)
             logger.warning("Checking connection and restarting server")
-            self.waiter()
+            self.run()
 
 
 class Client(Thread):
