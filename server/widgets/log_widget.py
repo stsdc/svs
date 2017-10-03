@@ -1,7 +1,7 @@
 import curses
 
 
-def log_box( h, w, y, x):
+def log_box(h, w, y, x):
     wrapper = curses.newwin(h, w, y, x)
     wrapper.box()
     box = wrapper.derwin(h - 2, w - 2, 1, 1)

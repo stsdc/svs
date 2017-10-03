@@ -34,7 +34,7 @@ class SocketServer(Thread):
             logger.error("Could not open socket: %s", e)
             sys.exit(1)
 
-    def handle_data(self):
+    def connect(self):
         # maybe remove this select?
         self.open_socket()
         input = [self.server, sys.stdin]
@@ -75,15 +75,14 @@ class SocketServer(Thread):
 
     def run(self):
         is_client_connected = False
-        while is_client_connected is not True:
+        while (is_client_connected is not True) and (getattr(self, "do_run", True)):
             sleep(3)
             is_client_connected = self.check_connectivity()
         try:
-            self.handle_data()
+            self.connect()
         except BaseException as e:
             logger.error("Error when starting server: %s", e)
-            logger.warning("Checking connection and restarting server")
-            self.run()
+            # logger.warning("Checking connection and restarting server")
 
 
 class Client(Thread):
@@ -138,5 +137,3 @@ class Client(Thread):
         except (TypeError, ValueError) as e:
             raise Exception('Data received was not in JSON format')
         return deserialized
-
-
