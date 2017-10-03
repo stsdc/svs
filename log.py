@@ -15,11 +15,6 @@ class CursesHandler(logging.Handler):
         logging.Handler.__init__(self)
         self.screen = screen
 
-        curses.start_color()
-        curses.use_default_colors()
-        for i in range(0, curses.COLORS):
-            curses.init_pair(i + 1, i, -1)
-
     def emit(self, record):
         try:
             msg = self.format(record)

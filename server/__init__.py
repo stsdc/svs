@@ -1,6 +1,6 @@
 from log import logger, setup_log
 import curses
-from widgets.log_widget import log_box
+from widgets import log_box, header_widget
 # import test
 from time import sleep
 from socketserver import SocketServer
@@ -13,6 +13,13 @@ class UI():
         # self.daemon = True
         self.screen = None
         self.socket_server = SocketServer("", 8888)
+
+        self.maxx = None
+        self.maxy = None
+
+        self.run()
+
+    def run(self):
         try:
             curses.wrapper(self.start_ui)
         except Exception as e:
@@ -20,35 +27,34 @@ class UI():
             print e
 
     def start_ui(self, stdscr):
-        stdscr.nodelay(1)
-        maxy, maxx = stdscr.getmaxyx()
-        begin_x = 2
-        begin_y = maxy - 9
-        height = 9
-        width = maxx - 4
+        self.init_screen(stdscr)
 
-        # win.immedok(True)
-        curses.setsyx(-1, -1)
-        stdscr.addstr(0, 0, "Testing my curses app")
-        stdscr.refresh()
+        box2 = log_box(14, self.maxx - 4, self.maxy - 14, 2)
 
-        box2 = log_box(height, width, begin_y, begin_x)
-
-        setup_log(box2)
+        header_widget(1, self.maxx, 0, 0)
 
         self.socket_server.start()
 
-        logger.info("SSSS")
-
         box2.getch()
+        self.socket_server.stop()
         self.stop()
 
+    def init_colors(self):
+        curses.start_color()
+        curses.use_default_colors()
+        for i in range(0, curses.COLORS):
+            curses.init_pair(i + 1, i, -1)
+
+    def init_screen(self, stdscr):
+        stdscr.nodelay(1)
+        self.maxy, self.maxx = stdscr.getmaxyx()
+        curses.setsyx(-1, -1)
+        stdscr.refresh()
+        self.init_colors()
 
     def stop(self):
-        self.socket_server.stop()
 
         curses.curs_set(1)
         curses.nocbreak()
         curses.echo()
         curses.endwin()
-
