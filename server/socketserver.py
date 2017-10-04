@@ -20,6 +20,8 @@ class SocketServer(Thread):
         self.server = None
         self.threads = []
         self.running = 1
+        self.hotspot = HotSpot()
+
 
     def open_socket(self):
         try:
@@ -63,11 +65,11 @@ class SocketServer(Thread):
         self.join()
 
     def check_connectivity(self):
-        hotspot = HotSpot()
-        if bool(hotspot.clients):
-            for mac in hotspot.clients:
-                logger.info("HotSpot: Connected client: %s, %s, %s", hotspot.clients[mac][4], hotspot.clients[mac][3],
-                            hotspot.clients[mac][5])
+        self.hotspot.check()
+        if self.hotspot.clients:
+            for mac in self.hotspot.clients:
+                logger.info("HotSpot: Connected client: %s, %s, %s", self.hotspot.clients[mac][4], self.hotspot.clients[mac][3],
+                            self.hotspot.clients[mac][5])
             return True
         else:
             logger.warning("HotSpot: No clients")
