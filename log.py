@@ -41,7 +41,7 @@ class CursesHandler(logging.Handler):
 def setup_log(win):
     logging.getLogger().setLevel(logging.DEBUG)
     mh = CursesHandler(win)
-    formatterDisplay = logging.Formatter('[%(asctime)s] %(levelname)-0s: %(message)s', '%H:%M:%S')
+    formatterDisplay = logging.Formatter('[%(asctime)s] %(message)s', '%H:%M:%S')
     mh.setFormatter(formatterDisplay)
     logger.addHandler(mh)
 

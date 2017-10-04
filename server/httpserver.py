@@ -22,6 +22,11 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # then s.path equals "/foo/bar/".
         s.wfile.write("<p>@stsdc</p>")
         s.wfile.write("</body></html>")
+        s.send_response(301)
+        new_path = '%s%s' % ('http://localhost:8081', s.path)
+        s.send_header('Location', new_path)
+
+        s.end_headers()
 
 
 if __name__ == '__main__':

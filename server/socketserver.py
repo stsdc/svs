@@ -64,22 +64,12 @@ class SocketServer(Thread):
         self.do_run = False
         self.join()
 
-    def check_connectivity(self):
-        self.hotspot.check()
-        if self.hotspot.clients:
-            for mac in self.hotspot.clients:
-                logger.info("HotSpot: Connected client: %s, %s, %s", self.hotspot.clients[mac][4], self.hotspot.clients[mac][3],
-                            self.hotspot.clients[mac][5])
-            return True
-        else:
-            logger.warning("HotSpot: No clients")
-        return False
 
     def run(self):
         is_client_connected = False
         while (is_client_connected is not True) and (getattr(self, "do_run", True)):
             sleep(3)
-            is_client_connected = self.check_connectivity()
+            is_client_connected = self.hotspot.check()
         try:
             self.connect()
         except BaseException as e:

@@ -96,6 +96,18 @@ class HotSpot(object):
         self.get_hostapd()
         self.get_arp_table()
         # self.show()
+        if self.clients:
+            logger.debug("HotSpot: Clients:%s", bool(self.clients))
+            for mac in self.clients:
+                try:
+                    logger.info("HotSpot: Connected client: %s, %s, %s", self.clients[mac][4], self.clients[mac][3],
+                                self.clients[mac][5])
+                except IndexError as e:
+                    logger.error("HotSpot: error: %s", e)
+            return True
+        else:
+            logger.warning("HotSpot: No clients")
+        return False
 
     def show(self):
         print self.clients
