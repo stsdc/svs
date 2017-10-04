@@ -5,4 +5,5 @@ if socket.gethostname() == 'main_unit':
     UI()
 else:
     from client import Client
-    Client()
+    client = Client()
+    client.run()
