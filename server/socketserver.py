@@ -73,7 +73,8 @@ class SocketServer(Thread):
         try:
             self.connect()
         except BaseException as e:
-            logger.error("Error when starting server: %s", e)
+            logger.exception("Error when starting server: %s", e)
+            self.stop()
             # logger.warning("Checking connection and restarting server")
 
 

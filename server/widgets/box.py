@@ -33,3 +33,7 @@ class Box(object):
     def set_colors_scheme(self):
         curses.init_pair(44, 43, 0)
         self.window.bkgd(' ', curses.color_pair(44))
+
+    def add(self, line_y, line_x, text):
+        self.box.addstr(line_y, line_x, text)
+        self.refresh()
