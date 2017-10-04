@@ -1,6 +1,6 @@
 from log import logger, setup_log
 import curses
-from widgets import LogBox, header_widget
+from widgets import LogBox, HeaderBox
 # import test
 from time import sleep
 from socketserver import SocketServer
@@ -20,18 +20,18 @@ class UI():
         self.run()
 
     def run(self):
-        try:
-            curses.wrapper(self.start_ui)
-        except Exception as e:
-            self.stop()
-            print e
+        # try:
+        curses.wrapper(self.start_ui)
+        # except Exception as e:
+        #     self.stop()
+        #     raise e
 
     def start_ui(self, stdscr):
         self.init_screen(stdscr)
 
         logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 
-        header_widget(1, self.maxx, 0, 0)
+        headerbox = HeaderBox(1, self.maxx, 0, 0)
 
         self.socket_server.start()
 
