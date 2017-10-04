@@ -1,11 +1,18 @@
 import json
 import socket
 from time import sleep
+
 from cron import Cron
-from log import logger
-from socketclient import SocketClient
+from log import logger, run_coloredlogs
 from markerdetector import MarkerDetector
 from network import Network
+from socketclient import SocketClient
+
+run_coloredlogs()
+logger.info("-------------------------------------")
+logger.info("|  *   Synergia Vision System    *  |")
+logger.info("-------------------------------------")
+
 
 class Client(object):
 
@@ -15,9 +22,9 @@ class Client(object):
         while not Network().connect():
             sleep(10)
             continue
-        # MarkerDetector().run()
-        # self.marker_detector = MarkerDetector()
-        # self.socket_client = SocketClient("10.0.0.1", 50000)
+        MarkerDetector().run()
+        self.marker_detector = MarkerDetector()
+        self.socket_client = SocketClient("10.0.0.1", 50000)
 
     # probably move this all data structure to vision?
     # or just retrieve the data in one structure and jsonify here
