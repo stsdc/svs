@@ -1,2 +1,2 @@
-from .log_widget import log_box
+from .log_widget import LogBox
 from .header_widget import header_widget

@@ -1,6 +1,6 @@
 from log import logger, setup_log
 import curses
-from widgets import log_box, header_widget
+from widgets import LogBox, header_widget
 # import test
 from time import sleep
 from socketserver import SocketServer
@@ -29,13 +29,13 @@ class UI():
     def start_ui(self, stdscr):
         self.init_screen(stdscr)
 
-        box2 = log_box(14, self.maxx - 4, self.maxy - 14, 2)
+        logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 
         header_widget(1, self.maxx, 0, 0)
 
         self.socket_server.start()
 
-        box2.getch()
+        logbox.box.getch()
         self.socket_server.stop()
         self.stop()
 
