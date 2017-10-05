@@ -13,7 +13,6 @@ from log import logger
 
 
 class HotSpot(object):
-
     def __init__(self):
         self.HOSTAPD_CONTROL_PATH = '/var/run/hostapd'
         self.HOSTAPD_CLI_PATH = '/usr/sbin/hostapd_cli'
@@ -27,10 +26,6 @@ class HotSpot(object):
         self.clients = dict()
         self.arp_table = dict()
         self.hostapd_stats = dict()
-
-        self.get_hostapd()
-        self.get_arp_table()
-        # self.show()
 
     def get_hostapd(self):
         for hostapd_iface in self.hostapd_interfaces:
@@ -96,6 +91,23 @@ class HotSpot(object):
         except:
             vendor = 'Unknown'
         return vendor
+
+    def check(self):
+        self.get_hostapd()
+        self.get_arp_table()
+        # self.show()
+        if self.clients:
+            logger.debug("HotSpot: Clients:%s", bool(self.clients))
+            for mac in self.clients:
+                try:
+                    logger.info("HotSpot: Connected client: %s, %s, %s", self.clients[mac][4], self.clients[mac][3],
+                                self.clients[mac][5])
+                except IndexError as e:
+                    logger.error("HotSpot: error: %s", e)
+            return True
+        else:
+            logger.warning("HotSpot: No clients")
+        return False
 
     def show(self):
         print self.clients

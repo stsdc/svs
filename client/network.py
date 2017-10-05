@@ -61,7 +61,8 @@ class Network(object):
                     self.activateConnection(connection)
                 else:
                     logger.warning("Network: Connection is not added")
-                return self.isConnected()
+
+            return is_connected
         else:
             logger.warning("Network: No Access Point")
             return False

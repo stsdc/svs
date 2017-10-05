@@ -1,11 +1,18 @@
 import json
 import socket
 from time import sleep
+
 from cron import Cron
-from log import logger
-from socketclient import SocketClient
+from log import logger, run_coloredlogs
 from markerdetector import MarkerDetector
 from network import Network
+from socketclient import SocketClient
+
+run_coloredlogs()
+logger.info("-------------------------------------")
+logger.info("|  *   Synergia Vision System    *  |")
+logger.info("-------------------------------------")
+
 
 class Client(object):
 
@@ -15,7 +22,10 @@ class Client(object):
         while not Network().connect():
             sleep(10)
             continue
+<<<<<<< HEAD
         MarkerDetector().run()
+=======
+>>>>>>> ui
         self.marker_detector = MarkerDetector()
         self.socket_client = SocketClient("10.0.0.1", 50000)
 
@@ -45,8 +55,8 @@ class Client(object):
         self.marker_detector.join()
 
     def run(self):
+        self.socket_client.connect()
         self.marker_detector.start()
-        # check if thread is alive
         while True:
             try:
                 self.socket_client.send(self.jsonify(self.marker_detector.get_marker()))
@@ -57,7 +67,11 @@ class Client(object):
                     self.close()
                     break
                 logger.debug(response)
-            except (socket.error, KeyboardInterrupt) as e:
-                logger.error(e)
+            except socket.error as e:
+                logger.error("SocketClient: %s", e)
+                self.close()
+                break
+            except KeyboardInterrupt:
+                logger.warning("SocketClient: Closing...")
                 self.close()
                 break

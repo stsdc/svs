@@ -15,7 +15,7 @@ class MarkerDetector(Thread):
 
     def __init__(self):
         super(MarkerDetector, self).__init__()
-        # self.daemon = True
+        self.daemon = True
         self._stop_event = Event()
 
         self.PATH = "client/calibration.yml"
@@ -52,15 +52,15 @@ class MarkerDetector(Thread):
             self.camera_matrix = np.asanyarray(yml.get("camera_matrix"), dtype=float)
             self.dist_coeffs = np.asanyarray(yml.get("dist_coeffs"), dtype=float)
             if self.camera_matrix is None:
-                logger.error("Calibrate eror: Can't read camera matrix")
+                logger.error("Calibrate error: Can't read camera matrix")
             elif self.dist_coeffs is None:
-                logger.info("Calibrate eror: Can't read distortion coefficients")
+                logger.info("Calibrate error: Can't read distortion coefficients")
             else:
                 logger.info("Calibrate: Loaded calibration file")
                 logger.debug("Calibrate: Camera matrix: %s", yml.get("camera_matrix"))
                 logger.debug("Calibrate: Distortion coefficients: %s", yml.get("dist_coeffs"))
         except (IOError) as e:
-            logger.error('Calibrate eror: %s', e)
+            logger.error('Calibrate error: %s', e)
             logger.error('If there is no calibration.yml try to run calibrate.py')
 
     def _achromatise(self, captured):
@@ -91,6 +91,7 @@ class MarkerDetector(Thread):
 
     def stop(self):
         self._stop_event.set()
+        self.join()
         logger.warning("Detector: Stopping...")
 
     def stopped(self):
