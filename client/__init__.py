@@ -51,8 +51,8 @@ class Client(object):
         self.marker_detector.join()
 
     def run(self):
+        self.socket_client.connect()
         self.marker_detector.start()
-        # check if thread is alive
         while True:
             try:
                 self.socket_client.send(self.jsonify(self.marker_detector.get_marker()))
@@ -63,7 +63,11 @@ class Client(object):
                     self.close()
                     break
                 logger.debug(response)
-            except (socket.error, KeyboardInterrupt) as e:
-                logger.error(e)
+            except socket.error as e:
+                logger.error("SocketClient: %s", e)
+                self.close()
+                break
+            except KeyboardInterrupt:
+                logger.warning("SocketClient: Closing...")
                 self.close()
                 break

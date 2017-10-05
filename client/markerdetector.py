@@ -91,6 +91,7 @@ class MarkerDetector(Thread):
 
     def stop(self):
         self._stop_event.set()
+        self.join()
         logger.warning("Detector: Stopping...")
 
     def stopped(self):
