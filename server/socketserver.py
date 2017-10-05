@@ -1,12 +1,12 @@
+import json
 import select
 import socket
 import sys
 from threading import Thread
-import json
 from time import sleep
-from hotspot import HotSpot
 
 from log import logger
+from network import HotSpot
 
 
 class SocketServer(Thread):

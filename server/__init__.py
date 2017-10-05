@@ -1,12 +1,14 @@
 from widgets import LogBox, HeaderBox, Screen, InfoBox
+from network import Network
 from time import sleep
 from socketserver import SocketServer
 
+
 class UI():
     def __init__(self):
-
         self.screen = Screen()
         self.socket_server = SocketServer("", 50000)
+        self.net = Network()
 
         self.maxx = self.screen.maxx
         self.maxy = self.screen.maxy
@@ -26,7 +28,8 @@ class UI():
         self.screen.stop()
 
     def serverbox(self):
-        infobox = InfoBox(10, 25, 2,2)
-        infobox.add(0, 0, "ETH0 IP: 127.0.0.1")
-        infobox.add(1, 0, "WLAN0 IP: 127.0.0.1")
-
+        infobox = InfoBox(10, 25, 2, 2)
+        infobox.add(0, 0, "ETH:")
+        infobox.add(0, 7, "%16s" % self.net.eth_ip())
+        infobox.add(1, 0, "WLAN:")
+        infobox.add(1, 7, "%16s" % self.net.wlan_ip())
