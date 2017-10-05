@@ -1,5 +1,6 @@
 from widgets import LogBox, HeaderBox, Screen, InfoBox
 from network import Network
+import os
 from time import sleep
 from socketserver import SocketServer
 
@@ -29,7 +30,9 @@ class UI():
 
     def serverbox(self):
         infobox = InfoBox(10, 25, 2, 2)
-        infobox.add(0, 0, "ETH:")
-        infobox.add(0, 7, "%16s" % self.net.eth_ip())
-        infobox.add(1, 0, "WLAN:")
-        infobox.add(1, 7, "%16s" % self.net.wlan_ip())
+        infobox.add(0, 0, "PID:")
+        infobox.add(0, 7, "%16s" % os.getpid())
+        infobox.add(1, 0, "ETH:")
+        infobox.add(1, 7, "%16s" % self.net.eth_ip())
+        infobox.add(2, 0, "WLAN:")
+        infobox.add(2, 7, "%16s" % self.net.wlan_ip())
