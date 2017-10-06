@@ -1,17 +1,33 @@
-import socket
-import socket
+import errno
 import json
+import socket
 import sys
+from time import sleep
+
 from log import logger
 
 
 class SocketClient(object):
 
-    socket = None
     def __init__(self, host, port):
+        self.host = host
+        self.port = port
         self.socket = socket.socket()
         self.socket.settimeout(5)
-        self.socket.connect((host, port))
+
+    def connect(self):
+        is_connected = False
+        while not is_connected:
+            try:
+                self.socket.connect((self.host, self.port))
+                is_connected = True
+            except socket.error as e:
+                if e.errno == errno.ECONNREFUSED:
+                    logger.warning("SocketClient: %s", e)
+                # else:
+                #     logger.exception("SocketClient: %s", e)
+                #     continue
+            sleep(1)
 
     def __del__(self):
         self.close()
