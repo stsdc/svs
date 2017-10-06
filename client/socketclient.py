@@ -16,11 +16,10 @@ class SocketClient(object):
         self.socket.settimeout(5)
 
     def connect(self):
-        is_connected = False
-        while not is_connected:
+        while True:
             try:
                 self.socket.connect((self.host, self.port))
-                is_connected = True
+                break
             except socket.error as e:
                 if e.errno == errno.ECONNREFUSED:
                     logger.warning("SocketClient: %s", e)
