@@ -4,7 +4,7 @@ import socket
 import sys
 from threading import Thread
 from time import sleep
-
+from events import Events
 from log import logger
 from network import HotSpot
 
@@ -21,6 +21,8 @@ class SocketServer(Thread):
         self.threads = []
         self.running = 1
         self.hotspot = HotSpot()
+
+        self.events = Events()
 
 
     def open_socket(self):
@@ -50,6 +52,7 @@ class SocketServer(Thread):
                     client = Client(self.server.accept())
                     client.start()
                     self.threads.append(client)
+                    self.events.on_change(True)
 
     def stop(self):
         # close all client threads
@@ -78,24 +81,28 @@ class SocketServer(Thread):
             # logger.warning("Checking connection and restarting server")
 
 
-class Client(Thread):
+class Client(Thread, Events):
     def __init__(self, (client, address)):
         Thread.__init__(self)
         self.client = client
         self.address = address
         self.size = 1024
         self.daemon = True
+        self.data = {}
+
+
 
     def run(self):
         running = 1
         while running:
-            data = self._recv(self.client)
-            print data
-            if data:
-                self._send(self.client, data)
+            self.data = self._recv(self.client)
+            self.new_data(self.data)
+            if self.data:
+                self._send(self.client, self.data)
             else:
                 self.client.close()
                 running = 0
+
 
     def _send(self, client, data):
         try:
