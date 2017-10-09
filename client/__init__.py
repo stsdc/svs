@@ -22,6 +22,10 @@ class Client(object):
         while not Network().connect():
             sleep(10)
             continue
+<<<<<<< HEAD
+        MarkerDetector().run()
+=======
+>>>>>>> ui
         self.marker_detector = MarkerDetector()
         self.socket_client = SocketClient("10.0.0.1", 50000)
 
