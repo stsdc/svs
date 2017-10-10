@@ -21,17 +21,17 @@ class ServerBox(Box):
         self.add(2, 0, "WLAN:")
         self.add(2, 7, "%16s" % self.net.wlan_ip())
 
-        self.add(3, 0, "STATUS:")
-        self.add(3, 7, "%16s" % "DISCONNECTED")
+        self.add(5, 0, "STATUS:")
+        self.add(5, 7, "%16s" % "DISCONNECTED")
 
-        self.add(4, 0, "GPU TEMP:")
-        self.add(4, 9, "%16s" % "")
+        self.add(3, 0, "GPU TEMP:")
+        self.add(3, 9, "%16s" % "")
 
         self._temperature()
 
     def update_status(self, status):
         if status:
-            self.add(4, 7, "%16s" % "CONNECTED")
+            self.add(5, 7, "%16s" % "CONNECTED")
 
     def _temperature(self):
         self._thread = threading.Timer(2.0, self._temperature)
@@ -40,7 +40,7 @@ class ServerBox(Box):
         celsius = c.encode('utf-8')
         res = os.popen("vcgencmd measure_temp").readline()
         res = (res.replace("temp=", "").replace("'", celsius))
-        self.add(4, 9, "%16s" % res)
+        self.add(3, 9, "%16s" % res)
 
     def close(self):
         self._thread.cancel()
