@@ -1,8 +1,8 @@
 import json
-import select
+import errno
 import socket
 import sys
-from threading import Thread
+from threading import Thread, Event
 from time import sleep
 from events import Events
 from log import logger
@@ -24,7 +24,6 @@ class SocketServer(Thread):
 
         self.events = Events()
 
-
     def open_socket(self):
         try:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,18 +40,12 @@ class SocketServer(Thread):
     def connect(self):
         # maybe remove this select?
         self.open_socket()
-        input = [self.server, sys.stdin]
         while getattr(self, "do_run", True):
-            inputready, outputready, exceptready = select.select(input, [], [])
-
-            for s in inputready:
-
-                if s == self.server:
-                    # handle the server socket
-                    client = Client(self.server.accept())
-                    client.start()
-                    self.threads.append(client)
-                    self.events.on_change(True)
+            # handle the server socket
+            client = Client(self.server.accept())
+            client.start()
+            self.threads.append(client)
+            self.events.on_change(True)
 
     def stop(self):
         # close all client threads
@@ -62,11 +55,10 @@ class SocketServer(Thread):
 
         if self.threads:
             for client in self.threads:
+                client.stop()
                 client.join()
 
         self.do_run = False
-        self.join()
-
 
     def run(self):
         is_client_connected = False
@@ -88,19 +80,25 @@ class Client(Thread, Events):
         self.address = address
         self.size = 1024
         self.daemon = True
+        self._stop_event = Event()
         self.data = {}
-
-
 
     def run(self):
         running = 1
         while running:
-            self.data = self._recv(self.client)
-            self.new_data(self.data)
-            if self.data:
-                self._send(self.client, self.data)
-            else:
+            try:
+                self.data = self._recv(self.client)
+                self.new_data(self.data)
+                if self.data:
+                    self._send(self.client, self.data)
+            except socket.error as e:
+                if e.errno == errno.ECONNRESET:
+                    logger.warning("SocketClient: %s", e)
+                else:
+                    logger.warning("SocketClient: %s", e)
+                    continue
                 self.client.close()
+                self.stop()
                 running = 0
 
 
@@ -137,3 +135,9 @@ class Client(Thread, Events):
         except (TypeError, ValueError) as e:
             raise Exception('Data received was not in JSON format')
         return deserialized
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
