@@ -36,10 +36,10 @@ class ServerBox(Box):
     def _temperature(self):
         self._thread = threading.Timer(2.0, self._temperature)
         self._thread.start()
-        degree = u"\u00B0"
-        degree = degree.encode('utf-8')
+        c = u"\u00B0"
+        celsius = c.encode('utf-8')
         res = os.popen("vcgencmd measure_temp").readline()
-        res = (res.replace("temp=", "").replace("'", degree))
+        res = (res.replace("temp=", "").replace("'", celsius))
         self.add(3, 9, "%16s" % res)
 
     def close(self):

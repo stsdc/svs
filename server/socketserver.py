@@ -92,10 +92,7 @@ class Client(Thread, Events):
                 if self.data:
                     self._send(self.client, self.data)
             except socket.error as e:
-                if e.errno == errno.ECONNRESET:
-                    logger.warning("SocketClient: %s", e)
-                else:
-                    logger.warning("SocketClient: %s", e)
+                logger.error("SocketClient: %s", e)
                 running = 0
 
         self.stop()
