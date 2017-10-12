@@ -45,7 +45,7 @@ class SocketServer(Thread):
             client = Client(self.server.accept())
             client.start()
             self.threads.append(client)
-            self.events.on_change(True)
+            self.events.on_change(client.isAlive())
 
     def stop(self):
         # close all client threads
@@ -96,10 +96,9 @@ class Client(Thread, Events):
                     logger.warning("SocketClient: %s", e)
                 else:
                     logger.warning("SocketClient: %s", e)
-                    continue
-                self.client.close()
-                self.stop()
                 running = 0
+
+        self.stop()
 
 
     def _send(self, client, data):
@@ -137,6 +136,7 @@ class Client(Thread, Events):
         return deserialized
 
     def stop(self):
+        self.client.close()
         self._stop_event.set()
 
     def stopped(self):
