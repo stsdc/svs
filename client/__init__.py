@@ -1,4 +1,3 @@
-import json
 import socket
 from time import sleep
 
@@ -26,12 +25,6 @@ class Client(object):
         self.marker_detector = MarkerDetector()
         self.socket_client = SocketClient("10.0.0.1", 50000)
 
-    # probably move this all data structure to vision?
-    # or just retrieve the data in one structure and jsonify here
-    # so detector thread wouldn't slowing down
-    def jsonify(self, marker):
-        return json.dumps(self.make_dict(marker))
-
     def make_dict(self, marker):
         # that's a huge mess. It should handle multiple markers.
         # marker is a tuple
@@ -56,7 +49,7 @@ class Client(object):
         self.marker_detector.start()
         while True:
             try:
-                self.socket_client.send(self.jsonify(self.marker_detector.get_marker()))
+                self.socket_client.send(self.make_dict(self.marker_detector.get_marker()))
                 sleep(1)
                 response = self.socket_client.recv()
                 if not response:
