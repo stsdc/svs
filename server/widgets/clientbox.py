@@ -11,10 +11,25 @@ class ClientBox(Box):
 
         self.title("Client-Unit0")
 
-        self.add(4, 0, "ROTATION")
-        self.add(5, 1, "X:")
-        self.add(5, 7, "%16s" % "N/A")
+        self.rot_b_x = 0
+        self.rot_b_x_right = self.rot_b_x+4
+        self.rot_block_y = 2
+        self.add(self.rot_block_y, self.rot_b_x, "ROTATION")
+        self.add(self.rot_block_y+1, self.rot_b_x+1, "X:")
+        self.add(self.rot_block_y+1, self.rot_b_x_right, "%19s" % "N/A")
+
+        self.add(self.rot_block_y+2, self.rot_b_x+1, "Y:")
+        self.add(self.rot_block_y+2, self.rot_b_x_right, "%19s" % "N/A")
+        #
+        self.add(self.rot_block_y+3, self.rot_b_x+1, "Z:")
+        self.add(self.rot_block_y+3, self.rot_b_x_right, "%19s" % "N/A")
 
     def update_data(self, data):
-        rotx = data["rotation"]
-        self.add(5, 7, "%16s" % rotx)
+        if data["rotation"]:
+            self.add(self.rot_block_y+1, self.rot_b_x_right, "%19s" % data["rotation"][0])
+            self.add(self.rot_block_y+2, self.rot_b_x_right, "%19s" % data["rotation"][1])
+            self.add(self.rot_block_y+3, self.rot_b_x_right, "%19s" % data["rotation"][2])
+        else:
+            self.add(self.rot_block_y+1, self.rot_b_x_right, "%19s" % "N/A")
+            self.add(self.rot_block_y+2, self.rot_b_x_right, "%19s" % "N/A")
+            self.add(self.rot_block_y+3, self.rot_b_x_right, "%19s" % "N/A")

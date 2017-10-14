@@ -58,8 +58,7 @@ class UI():
 
 
     def update_client0(self, data):
-        logger.debug("%s", data)
-        # self.clientbox0.update_data(data)
+        self.clientbox0.update_data(data)
 
     def stop(self):
         self.serverbox.close()
