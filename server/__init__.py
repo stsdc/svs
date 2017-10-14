@@ -1,4 +1,4 @@
-from widgets import LogBox, HeaderBox, Screen, ServerBox
+from widgets import LogBox, HeaderBox, Screen, ServerBox, ClientBox
 from network import Network
 from log import logger
 import os
@@ -13,12 +13,15 @@ class UI():
         self.socket_server = SocketServer("", 50000)
         self.socket_server.events.on_change += self.update_server_status
 
+        self.client0 = None
+
         self.maxx = self.screen.maxx
         self.maxy = self.screen.maxy
 
         # UI elements
         self.headerbox = HeaderBox(1, self.maxx, 0, 0)
         self.serverbox = ServerBox(10, 25, 2, 2)
+        self.clientbox0 = ClientBox(10, 25, 2, 30)
         self.logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 
         self.start_ui()
@@ -28,6 +31,7 @@ class UI():
 
 
         self.socket_server.start()
+
         # sleep(5)
         # logger.debug("%s", len(self.socket_server.threads))
         # client.on("new_data", self.show_data)
@@ -41,13 +45,24 @@ class UI():
         # while key != ord('q'):  # press <Q> to exit the program
         self.logbox.box.getch()  # get the key
 
-        self.serverbox.close()
-        self.socket_server.stop()
-        self.screen.stop()
+        self.stop()
 
     def show_data(self, data):
         logger.debug("%s", data)
 
     def update_server_status(self, status):
         self.serverbox.update_status(status)
+
+        client0 = self.socket_server.threads[0]
+        client0.events.on_new_data += self.update_client0
+
+
+    def update_client0(self, data):
+        logger.debug("%s", data)
+        # self.clientbox0.update_data(data)
+
+    def stop(self):
+        self.serverbox.close()
+        self.socket_server.stop()
+        self.screen.stop()
 
