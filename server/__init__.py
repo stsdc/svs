@@ -21,7 +21,7 @@ class UI():
         # UI elements
         self.headerbox = HeaderBox(1, self.maxx, 0, 0)
         self.serverbox = ServerBox(10, 25, 2, 2)
-        self.clientbox0 = ClientBox(10, 25, 2, 30)
+        self.clientbox0 = ClientBox(20, 25, 2, 30)
         self.logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 
         self.start_ui()
