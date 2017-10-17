@@ -49,8 +49,8 @@ class SocketClient(object):
         try:
             data = self.socket.recv(1024)
             deserialized = pickle.loads(data)
-        except EOFError, e:
-            logger.error('SocketClient:', e)
+        except BaseException as e:
+            logger.error('SocketClient: Some problem with deserialization')
             return None
         return deserialized
 

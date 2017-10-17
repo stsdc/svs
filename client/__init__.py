@@ -29,7 +29,7 @@ class Client(object):
         # that's a huge mess. It should handle multiple markers.
         # marker is a tuple
         # isApple = True if fruit == 'Apple' else False
-        values = ["", "", ""]
+        values = [[], [], []]
         if marker[0] is not None:
             values = [
                 list(marker[0]),
