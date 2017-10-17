@@ -104,6 +104,7 @@ class HotSpot(object):
                                 self.clients[mac][5])
                 except IndexError as e:
                     logger.error("HotSpot: error: %s", e)
+                    logger.warning("Probably low energy power source")
             return True
         else:
             logger.warning("HotSpot: No clients")

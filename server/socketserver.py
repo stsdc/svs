@@ -1,12 +1,12 @@
-import select
+import errno
 import socket
 import sys
-from threading import Thread
-import json
+from threading import Thread, Event
 from time import sleep
-from hotspot import HotSpot
-
+from events import Events
 from log import logger
+from network import HotSpot
+import pickle
 
 
 class SocketServer(Thread):
@@ -22,6 +22,7 @@ class SocketServer(Thread):
         self.running = 1
         self.hotspot = HotSpot()
 
+        self.events = Events()
 
     def open_socket(self):
         try:
@@ -39,17 +40,12 @@ class SocketServer(Thread):
     def connect(self):
         # maybe remove this select?
         self.open_socket()
-        input = [self.server, sys.stdin]
         while getattr(self, "do_run", True):
-            inputready, outputready, exceptready = select.select(input, [], [])
-
-            for s in inputready:
-
-                if s == self.server:
-                    # handle the server socket
-                    client = Client(self.server.accept())
-                    client.start()
-                    self.threads.append(client)
+            # handle the server socket
+            client = Client(self.server.accept())
+            client.start()
+            self.threads.append(client)
+            self.events.on_change(client.isAlive())
 
     def stop(self):
         # close all client threads
@@ -59,11 +55,10 @@ class SocketServer(Thread):
 
         if self.threads:
             for client in self.threads:
+                client.stop()
                 client.join()
 
         self.do_run = False
-        self.join()
-
 
     def run(self):
         is_client_connected = False
@@ -85,48 +80,29 @@ class Client(Thread):
         self.address = address
         self.size = 1024
         self.daemon = True
+        self._stop_event = Event()
+        self.events = Events()
+        self.data = {}
 
     def run(self):
         running = 1
         while running:
-            data = self._recv(self.client)
-            print data
-            if data:
-                self._send(self.client, data)
-            else:
-                self.client.close()
+            try:
+                data = self.client.recv(1024)
+                self.data = pickle.loads(data)
+                if self.data:
+                    self.events.on_new_data(self.data)
+                    self.client.sendall(data)
+            except socket.error as e:
+                logger.error("SocketClient: %s", e)
                 running = 0
 
-    def _send(self, client, data):
-        try:
-            serialized = json.dumps(data)
-        except (TypeError, ValueError) as e:
-            raise Exception('You can only send JSON-serializable data')
-        # send the length of the serialized data first
-        d = '%d\n' % len(serialized)
-        client.send(d.encode('utf-8'))
-        # send the serialized data
-        client.sendall(serialized.encode('utf-8'))
+        self.stop()
 
-    def _recv(self, client):
-        # read the length of the data, letter by letter until we reach EOL
-        length_str = ''
-        char = client.recv(1).decode('utf-8')
+    def stop(self):
+        self.client.close()
+        # self._cancel()
+        self._stop_event.set()
 
-        while char != '\n':
-            length_str += char
-            char = client.recv(1).decode('utf-8')
-
-        total = int(length_str)
-        # use a memoryview to receive the data chunk by chunk efficiently
-        view = memoryview(bytearray(total))
-        next_offset = 0
-        while total - next_offset > 0:
-            recv_size = client.recv_into(view[next_offset:], total - next_offset)
-            next_offset += recv_size
-        try:
-            view = view.tobytes()
-            deserialized = json.loads(view.decode('utf-8'))
-        except (TypeError, ValueError) as e:
-            raise Exception('Data received was not in JSON format')
-        return deserialized
+    def stopped(self):
+        return self._stop_event.is_set()
