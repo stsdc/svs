@@ -1,5 +1,5 @@
 import os
-from threading import Thread, Lock, Event, Timer
+from threading import Thread, Event
 
 import cv2
 import numpy as np
@@ -14,7 +14,7 @@ from log import logger
 class MarkerDetector(Thread):
 
     def __init__(self):
-        super(MarkerDetector, self).__init__()
+        Thread.__init__(self)
         self.daemon = True
         self._stop_event = Event()
 
@@ -26,24 +26,20 @@ class MarkerDetector(Thread):
         self.aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
         self.aruco_params = aruco.DetectorParameters_create()
 
-        self.id = None
-        self.rotation = None
-        self.translation = None
-
-        # self.marker = {
-        #     "id" : "",
-        #     "rotation" : "",
-        #     "translation" : ""
-        # }
+        self.ids = []
+        self.rotations = []
+        self.translations = []
 
         self._calibrate()
+
+
 
     def run(self):
         captured = cv2.VideoCapture(0)
         while not self.stopped():
             # make it like in a good old movie
             gray = self._achromatise(captured)
-            self.id, self.rotation, self.translation = self._detect(gray)
+            self.ids, self.rotations, self.translations = self._detect(gray)
 
     def _calibrate(self):
         try:
@@ -71,14 +67,14 @@ class MarkerDetector(Thread):
         corners, ids, rejectedImgPoints = aruco.detectMarkers(
             gray, self.aruco_dict, parameters=self.aruco_params)
         if type(ids) is np.ndarray:  # if aruco marker detected
-            self._log_markers(ids)
+            # self._log_markers(ids)
 
             rvec, tvec, _objPoints = aruco.estimatePoseSingleMarkers(
                 corners, self.MARKER_SIZE, self.camera_matrix,
                 self.dist_coeffs)
-            return ids[0], rvec[0][0], tvec[0][0]
+            return ids, rvec, tvec
         else:
-            return None, None, None
+            return [], [], []
 
     def _log_markers(self, ids):
         marker_string = ""
@@ -87,7 +83,7 @@ class MarkerDetector(Thread):
         logger.info("Marker(s) id:%s", marker_string)
 
     def get_marker(self):
-        return self.id, self.rotation, self.translation
+        return (self.ids, self.rotations, self.translations)
 
     def stop(self):
         self._stop_event.set()
