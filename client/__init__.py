@@ -1,6 +1,6 @@
 import socket
 from time import sleep
-
+import numpy as np
 from cron import Cron
 from log import logger, run_coloredlogs
 from markerdetector import MarkerDetector
@@ -23,25 +23,29 @@ class Client(object):
         #     continue
 
         self.marker_detector = MarkerDetector()
-        
-        # self.socket_client = SocketClient("10.0.0.1", 50000)
 
-    def make_dict(self, ids, rotations, translations):
-        # that's a huge mess. It should handle multiple markers.
-        # marker is a tuple
-        # isApple = True if fruit == 'Apple' else False
-        for id in ids:
-            print id
+        self.socket_client = SocketClient("10.0.0.1", 50000)
 
-        values = [[], [], []]
-        if marker[0] is not None:
-            values = [
-                list(marker[0]),
-                list(marker[1]),
-                list(marker[2])
-            ]
-        keys = ['id', 'rotation', 'translation']
-        return dict(zip(keys, values))
+    def pack_markers(self, (ids, rotations, translations)):
+        markers = []
+        marker = {
+            "id": -1,
+            "rot": [],
+            "tran": []
+        }
+        if ids is not None:
+            # ids = list(ids)
+            for index, id in enumerate(ids):
+                marker = {
+                "id": id[0],
+                "rot": list(rotations[index][0]),
+                "tran": list(translations[index][0])
+                }
+                markers.append(marker)
+        return markers
+
+    def pack_telemetry(self):
+        pass
 
     def close(self):
         self.socket_client.close()
@@ -49,25 +53,25 @@ class Client(object):
         self.marker_detector.join()
 
     def run(self):
-        # self.socket_client.connect()
+        self.socket_client.connect()
         self.marker_detector.start()
-        print self.marker_detector.get_marker()
-        # self.make_dict(self.marker_detector.get_marker())
-        # while True:
-        #     try:
-        #         self.socket_client.send(self.make_dict(self.marker_detector.get_marker()))
-        #         sleep(1)
-        #         response = self.socket_client.recv()
-        #         if not response:
-        #             logger.warning("No response. Exit...")
-        #             self.close()
-        #             break
-        #         logger.debug(response)
-        #     except socket.error as e:
-        #         logger.error("SocketClient: %s", e)
-        #         self.close()
-        #         break
-        #     except KeyboardInterrupt:
-        #         logger.warning("SocketClient: Closing...")
-        #         self.close()
-        #         break
+        while True:
+            try:
+                # self.socket_client.send(self.make_dict(self.marker_detector.get_marker()))
+                print self.make_dict(self.marker_detector.get_marker())
+
+                sleep(1)
+                # response = self.socket_client.recv()
+                # if not response:
+                #     logger.warning("No response. Exit...")
+                #     self.close()
+                #     break
+                # logger.debug(response)
+            except socket.error as e:
+                logger.error("SocketClient: %s", e)
+                self.close()
+                break
+            except KeyboardInterrupt:
+                logger.warning("SocketClient: Closing...")
+                self.close()
+                break

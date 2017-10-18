@@ -26,9 +26,9 @@ class MarkerDetector(Thread):
         self.aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
         self.aruco_params = aruco.DetectorParameters_create()
 
-        self.ids = None
-        self.rotations = None
-        self.translations = None
+        self.ids = []
+        self.rotations = []
+        self.translations = []
 
         # self.marker = {
         #     "id" : "",
@@ -41,11 +41,7 @@ class MarkerDetector(Thread):
 
 
     def run(self):
-        print "RUN"
         captured = cv2.VideoCapture(0)
-        print "RUN1"
-
-
         while not self.stopped():
             # make it like in a good old movie
             gray = self._achromatise(captured)
@@ -84,7 +80,7 @@ class MarkerDetector(Thread):
                 self.dist_coeffs)
             return ids, rvec, tvec
         else:
-            return None, None, None
+            return [], [], []
 
     def _log_markers(self, ids):
         marker_string = ""
@@ -93,7 +89,7 @@ class MarkerDetector(Thread):
         logger.info("Marker(s) id:%s", marker_string)
 
     def get_marker(self):
-        return self.ids, self.rotations, self.translations
+        return (self.ids, self.rotations, self.translations)
 
     def stop(self):
         self._stop_event.set()
