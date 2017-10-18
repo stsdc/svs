@@ -16,14 +16,14 @@ logger.info("-------------------------------------")
 class Client(object):
 
     def __init__(self):
-        logger.debug("Initializing %s", socket.gethostname())
+        self.hostname = socket.gethostname()
+        logger.debug("Initializing %s", self.hostname)
         Cron().check()
         while not Network().connect():
             sleep(10)
             continue
 
         self.marker_detector = MarkerDetector()
-
         self.socket_client = SocketClient("10.0.0.1", 50000)
 
     def pack_markers(self, (ids, rotations, translations)):
@@ -47,7 +47,8 @@ class Client(object):
         temp = os.popen("cat /sys/devices/virtual/thermal/thermal_zone1/temp").readline()
         temp = temp.replace("\n", "")
         telemetry = {
-            "temp": temp
+            "temp": temp,
+            "hostname": self.hostname
         }
         return telemetry
 
@@ -71,12 +72,12 @@ class Client(object):
                 self.socket_client.send(data)
 
                 sleep(0.5)
-                # response = self.socket_client.recv()
-                # if not response:
-                #     logger.warning("No response. Exit...")
-                #     self.close()
-                #     break
-                # logger.debug(response)
+                response = self.socket_client.recv()
+                if not response:
+                    logger.warning("No response. Exit...")
+                    self.close()
+                    break
+                logger.debug(response)
             except socket.error as e:
                 logger.error("SocketClient: %s", e)
                 self.close()
