@@ -1,17 +1,17 @@
 from widgets import LogBox, HeaderBox, Screen, ServerBox, ClientBox
 from network import Network
 from log import logger
+from core import Core
 import os
 import keyboard
 from time import sleep
-from socketserver import SocketServer
 
 
 class UI():
     def __init__(self):
         self.screen = Screen()
-        self.socket_server = SocketServer("", 50000)
-        self.socket_server.events.on_change += self.update_server_status
+        self.core = Core()
+        self.core.sockserver.events.on_change += self.update_server_status
 
         self.client0 = None
 
@@ -28,9 +28,7 @@ class UI():
 
     def start_ui(self):
         # self.init_screen(stdscr)
-
-
-        self.socket_server.start()
+        self.core.start()
 
         # sleep(5)
         # logger.debug("%s", len(self.socket_server.threads))
@@ -53,8 +51,8 @@ class UI():
     def update_server_status(self, status):
         self.serverbox.update_status(status)
 
-        client0 = self.socket_server.threads[0]
-        client0.events.on_new_data += self.update_client0
+        client0 = self.core.sockserver.threads[0]
+        client0.events.on_new_data += self.show_data
 
 
     def update_client0(self, data):
@@ -62,6 +60,6 @@ class UI():
 
     def stop(self):
         self.serverbox.close()
-        self.socket_server.stop()
+        self.core.join()
         self.screen.stop()
 
