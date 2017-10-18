@@ -1,7 +1,6 @@
-import json
 import socket
 from time import sleep
-
+import os
 from cron import Cron
 from log import logger, run_coloredlogs
 from markerdetector import MarkerDetector
@@ -22,32 +21,41 @@ class Client(object):
         while not Network().connect():
             sleep(10)
             continue
-<<<<<<< HEAD
-        MarkerDetector().run()
-=======
->>>>>>> ui
+
         self.marker_detector = MarkerDetector()
+
         self.socket_client = SocketClient("10.0.0.1", 50000)
 
-    # probably move this all data structure to vision?
-    # or just retrieve the data in one structure and jsonify here
-    # so detector thread wouldn't slowing down
-    def jsonify(self, marker):
-        return json.dumps(self.make_dict(marker))
+    def pack_markers(self, (ids, rotations, translations)):
+        markers = []
+        marker = {
+            "id": -1,
+            "rot": [],
+            "tran": []
+        }
+        if ids is not None:
+            for index, id in enumerate(ids):
+                marker = {
+                "id": id[0],
+                "rot": list(rotations[index][0]),
+                "tran": list(translations[index][0])
+                }
+                markers.append(marker)
+        return markers
 
-    def make_dict(self, marker):
-        # that's a huge mess. It should handle multiple markers.
-        # marker is a tuple
-        # isApple = True if fruit == 'Apple' else False
-        values = ["", "", ""]
-        if marker[0] is not None:
-            values = [
-                list(marker[0]),
-                list(marker[1]),
-                list(marker[2])
-            ]
-        keys = ['id', 'rotation', 'translation']
-        return dict(zip(keys, values))
+    def pack_telemetry(self):
+        temp = os.popen("cat /sys/devices/virtual/thermal/thermal_zone1/temp").readline()
+        temp = temp.replace("\n", "")
+        telemetry = {
+            "temp": temp
+        }
+        return telemetry
+
+    def pack_all_data(self, marker):
+        return {
+            "telemetry": self.pack_telemetry(),
+            "markers": self.pack_markers(marker)
+        }
 
     def close(self):
         self.socket_client.close()
@@ -59,14 +67,16 @@ class Client(object):
         self.marker_detector.start()
         while True:
             try:
-                self.socket_client.send(self.jsonify(self.marker_detector.get_marker()))
-                sleep(1)
-                response = self.socket_client.recv()
-                if not response:
-                    logger.warning("No response. Exit...")
-                    self.close()
-                    break
-                logger.debug(response)
+                data = self.pack_all_data(self.marker_detector.get_marker())
+                self.socket_client.send(data)
+
+                sleep(0.5)
+                # response = self.socket_client.recv()
+                # if not response:
+                #     logger.warning("No response. Exit...")
+                #     self.close()
+                #     break
+                # logger.debug(response)
             except socket.error as e:
                 logger.error("SocketClient: %s", e)
                 self.close()
