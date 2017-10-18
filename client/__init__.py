@@ -17,10 +17,10 @@ class Client(object):
 
     def __init__(self):
         logger.debug("Initializing %s", socket.gethostname())
-        # Cron().check()
-        # while not Network().connect():
-        #     sleep(10)
-        #     continue
+        Cron().check()
+        while not Network().connect():
+            sleep(10)
+            continue
 
         self.marker_detector = MarkerDetector()
 
@@ -34,7 +34,6 @@ class Client(object):
             "tran": []
         }
         if ids is not None:
-            # ids = list(ids)
             for index, id in enumerate(ids):
                 marker = {
                 "id": id[0],
@@ -68,8 +67,8 @@ class Client(object):
         self.marker_detector.start()
         while True:
             try:
-                # self.socket_client.send(self.make_dict(self.marker_detector.get_marker()))
-                print self.pack_all_data(self.marker_detector.get_marker())
+                data = self.pack_all_data(self.marker_detector.get_marker())
+                self.socket_client.send(data)
 
                 sleep(0.5)
                 # response = self.socket_client.recv()
