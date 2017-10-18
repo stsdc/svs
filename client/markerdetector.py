@@ -30,12 +30,6 @@ class MarkerDetector(Thread):
         self.rotations = []
         self.translations = []
 
-        # self.marker = {
-        #     "id" : "",
-        #     "rotation" : "",
-        #     "translation" : ""
-        # }
-
         self._calibrate()
 
 
