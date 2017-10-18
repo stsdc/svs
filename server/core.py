@@ -1,6 +1,6 @@
 from socketserver import SocketServer
 from threading import Thread, Event
-
+from control import Control
 
 class Core(Thread):
     def __init__(self):
@@ -15,6 +15,7 @@ class Core(Thread):
         self.distance = None
 
         self.sockserver = SocketServer("", 50000)
+        self.control = Control()
 
     def run(self):
         self.sockserver.start()
