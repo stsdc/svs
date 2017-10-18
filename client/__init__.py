@@ -1,6 +1,6 @@
 import socket
 from time import sleep
-import numpy as np
+import os
 from cron import Cron
 from log import logger, run_coloredlogs
 from markerdetector import MarkerDetector
@@ -45,7 +45,18 @@ class Client(object):
         return markers
 
     def pack_telemetry(self):
-        pass
+        temp = os.popen("cat /sys/devices/virtual/thermal/thermal_zone1/temp").readline()
+        temp = temp.replace("\n", "")
+        telemetry = {
+            "temp": temp
+        }
+        return telemetry
+
+    def pack_all_data(self, marker):
+        return {
+            "telemetry": self.pack_telemetry(),
+            "markers": self.pack_markers(marker)
+        }
 
     def close(self):
         self.socket_client.close()
@@ -58,9 +69,9 @@ class Client(object):
         while True:
             try:
                 # self.socket_client.send(self.make_dict(self.marker_detector.get_marker()))
-                print self.make_dict(self.marker_detector.get_marker())
+                print self.pack_all_data(self.marker_detector.get_marker())
 
-                sleep(1)
+                sleep(0.5)
                 # response = self.socket_client.recv()
                 # if not response:
                 #     logger.warning("No response. Exit...")
