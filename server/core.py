@@ -1,6 +1,7 @@
 from socketserver import SocketServer
 from threading import Thread, Event
 from control import Control
+from log import logger
 
 class Core(Thread):
     def __init__(self):
@@ -15,7 +16,10 @@ class Core(Thread):
         self.distance = None
 
         self.sockserver = SocketServer("", 50000)
-        self.control = Control()
+        self.control = Control(self)
+
+        self.control.bd.when_double_pressed = self.make_snap
+
 
     def run(self):
         self.sockserver.start()
@@ -23,8 +27,9 @@ class Core(Thread):
     def distance(self):
         pass
 
-    def make_snap(self):
-        pass
+    # pos is unused, but needed
+    def make_snap(self, pos):
+        logger.info("SNAP")
 
     def area(self):
         pass
