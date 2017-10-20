@@ -10,8 +10,6 @@ from time import sleep
 class UI():
     def __init__(self):
         self.screen = Screen()
-        self.core = Core()
-        self.core.sockserver.events.on_change += self.update_server_status
 
         self.client0 = None
 
@@ -23,6 +21,9 @@ class UI():
         self.serverbox = ServerBox(10, 25, 2, 2)
         self.clientbox0 = ClientBox(20, 25, 2, 30)
         self.logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
+
+        self.core = Core()
+        self.core.sockserver.events.on_change += self.update_server_status
 
         self.start_ui()
 
