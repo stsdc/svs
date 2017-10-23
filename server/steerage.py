@@ -9,6 +9,8 @@ class Steerage:
         # self.control.bd.when_double_pressed = self.make_snap
         self.keyboard_control.events.forward += self.forward
         self.keyboard_control.events.backward += self.backward
+        self.keyboard_control.events.left += self.left
+        self.keyboard_control.events.right += self.right
         self.keyboard_control.events.stop += self.stop
 
         self.motor_power = 20
@@ -22,6 +24,12 @@ class Steerage:
 
     def backward(self):
         self.radio.send(-1 * self.motor_power, -1 * self.motor_power)
+
+    def left(self):
+        self.radio.send(int(0.2 * self.motor_power), 1 * self.motor_power)
+
+    def right(self):
+        self.radio.send(1 * self.motor_power, int(0.2 * self.motor_power))
 
     def stop(self):
         # Stop gracefully

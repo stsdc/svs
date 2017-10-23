@@ -21,11 +21,10 @@ class KeyboardControl:
         self.events.backward()
 
     def left(self):
-        logger.debug("LEFT")
+        self.events.left()
 
     def right(self):
-        logger.debug("RIGHT")
+        self.events.right()
 
-    def stop(self, event):
-        # Stop gracefully
+    def stop(self, e):
         self.events.stop()
