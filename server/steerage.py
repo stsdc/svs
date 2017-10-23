@@ -1,31 +1,28 @@
-import keyboard
-from log import logger
-from events import Events
+from control import KeyboardControl
+from radio import Radio
 
 
 class Steerage:
     def __init__(self):
-        self.events = Events()
+        self.keyboard_control = KeyboardControl()
 
-        keyboard.add_hotkey('w', self.forward)
-        keyboard.add_hotkey('s', self.backward)
-        keyboard.add_hotkey('a', self.left)
-        keyboard.add_hotkey('d', self.right)
+        # self.control.bd.when_double_pressed = self.make_snap
+        self.keyboard_control.events.forward += self.forward
+        self.keyboard_control.events.backward += self.backward
+        self.keyboard_control.events.stop += self.stop
 
-        keyboard.on_release(self.stop)
+        self.motor_power = 20
+        self.radio = Radio()
+
+    def move(self, motor_l, motor_r):
+        self.radio.send(motor_l * self.motor_power, motor_r * self.motor_power)
 
     def forward(self):
-        self.events.forward(1, 1)
+        self.radio.send(1 * self.motor_power, 1 * self.motor_power)
 
     def backward(self):
-        logger.debug("BACKWARD")
+        self.radio.send(-1 * self.motor_power, -1 * self.motor_power)
 
-    def left(self):
-        logger.debug("LEFT")
-
-    def right(self):
-        logger.debug("RIGHT")
-
-    def stop(self, event):
+    def stop(self):
         # Stop gracefully
-        self.events.stop(0, 0)
+        self.radio.send(0 * self.motor_power, 0 * self.motor_power)

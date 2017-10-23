@@ -3,7 +3,7 @@ from log import logger
 from events import Events
 
 
-class Control:
+class BlueDotControl:
     def __init__(self, core):
         self.bd = BlueDot()
         self.bd.print_messages = False
