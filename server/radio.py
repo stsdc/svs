@@ -4,8 +4,12 @@ from log import logger
 
 class Radio:
     def __init__(self):
-        self.serial = serial.Serial('/dev/ttyUSB0', baudrate=115200, timeout=3.0)
-        logger.info("RadioControl: device: %s", self.serial.name)
+        try:
+            self.serial = serial.Serial('/dev/ttyUSB0', baudrate=115200, timeout=3.0)
+            logger.info("Radio: device: %s", self.serial.name)
+        except serial.SerialException as e:
+            logger.error("Radio: %s", e)
+
         self.prev_data = ""
 
     def send(self, motor_l, motor_r):
@@ -13,7 +17,7 @@ class Radio:
         # made this to send data only once, since keyboard module sends it over and
         # over again. Should be done in keyboard module
         if self.prev_data != data:
-            logger.debug("RadioControl: send: %s", data.replace("\r\n", ""))
+            logger.debug("Radio: send: %s", data.replace("\r\n", ""))
             self.serial.write(data)
         self.prev_data = data
 
@@ -22,11 +26,11 @@ class Radio:
         postfix = "$0A\r\n"
         return prefix + self.convert(motor_l) + self.convert(motor_r) + postfix
 
-    def convert(self, motor):
-        if motor >= 0:
-            return "+" + self.canonicalize(motor)
-        if motor < 0:
-            return "-" + self.canonicalize(abs(motor))
+    def convert(self, power):
+        if power >= 0:
+            return "+" + self.canonicalize(power)
+        if power < 0:
+            return "-" + self.canonicalize(abs(power))
 
     def canonicalize(self, power):
         power = str(power)
