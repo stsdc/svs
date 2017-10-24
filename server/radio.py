@@ -24,8 +24,16 @@ class Radio:
 
     def convert(self, motor):
         if motor >= 0:
-            return "+" + str(motor)
-        return str(motor)
+            return "+" + self.canonicalize(motor)
+        if motor < 0:
+            return "-" + self.canonicalize(abs(motor))
+
+    def canonicalize(self, power):
+        power = str(power)
+        if len(power) == 1:
+            return "00" + power
+        if len(power) == 2:
+            return "0" + power
 
 
 
