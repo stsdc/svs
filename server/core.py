@@ -2,12 +2,15 @@ from socketserver import SocketServer
 from threading import Thread, Event
 from steerage import Steerage
 from log import logger
+from events import Events
 
 
 class Core(Thread):
     def __init__(self):
         Thread.__init__(self)
         self.daemon = True
+
+        self.events = Events()
 
         Steerage()
 
@@ -46,8 +49,14 @@ class Core(Thread):
     def referencing_clients_to_core(self, is_connected):
         if is_connected:
             self.unit0 = self.sockserver.threads[0]
+            self.unit0.events.on_new_data += self.update_unit0
             if len(self.sockserver.threads) > 1:
-                self.unit0 = self.sockserver.threads[1]
+                self.unit1 = self.sockserver.threads[1]
+                self.unit1.events.on_new_data += self.update_unit1
         else:
             self.unit0 = {}
             self.unit1 = {}
+
+    def update_unit0(self, data):
+        # self.distance()
+        self.events.update_unit0_ui(data["markers"])

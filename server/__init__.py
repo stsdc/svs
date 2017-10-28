@@ -24,6 +24,7 @@ class UI():
 
         self.core = Core()
         self.core.sockserver.events.on_connected += self.update_server_status
+        self.core.events.update_unit0_ui += self.update_client0
 
         self.start_ui()
 
@@ -41,10 +42,9 @@ class UI():
     def update_server_status(self, status):
         self.serverbox.update_status(status)
 
-        self.core.unit0.events.on_new_data += self.show_data
-
 
     def update_client0(self, data):
+        self.show_data(data)
         self.clientbox0.update_data(data)
 
     def stop(self):
