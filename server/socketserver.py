@@ -45,13 +45,14 @@ class SocketServer(Thread):
             client = Client(self.server.accept())
             client.start()
             self.threads.append(client)
-            self.events.on_change(client.isAlive())
+            self.events.on_connected(client.isAlive())
 
     def stop(self):
         # close all client threads
         if self.server:
             self.server.close()
             logger.warning("SocketServer: Stop")
+            self.events.on_connected(False)
 
         if self.threads:
             for client in self.threads:
@@ -93,8 +94,9 @@ class Client(Thread):
                 if self.data:
                     self.events.on_new_data(self.data)
                     self.client.sendall(data)
-            except socket.error as e:
+            except (socket.error, EOFError) as e:
                 logger.error("SocketClient: %s", e)
+                self.stop()
                 running = 0
 
         self.stop()

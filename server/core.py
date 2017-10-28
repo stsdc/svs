@@ -11,6 +11,9 @@ class Core(Thread):
 
         Steerage()
 
+        self.unit0 = {}
+        self.unit1 = {}
+
         self.snaps = {
             "unit0": {"A": [], "B": []},
             "unit1": {"A": [], "B": []}
@@ -19,7 +22,7 @@ class Core(Thread):
         self.distance = None
         self.sockserver = SocketServer("", 50000)
 
-
+        self.sockserver.events.on_connected += self.referencing_clients_to_core
 
 
     def run(self):
@@ -38,3 +41,13 @@ class Core(Thread):
 
     def __stop(self):
         self.sockserver.stop()
+
+    # this looks really lame
+    def referencing_clients_to_core(self, is_connected):
+        if is_connected:
+            self.unit0 = self.sockserver.threads[0]
+            if len(self.sockserver.threads) > 1:
+                self.unit0 = self.sockserver.threads[1]
+        else:
+            self.unit0 = {}
+            self.unit1 = {}
