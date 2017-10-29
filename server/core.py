@@ -16,6 +16,8 @@ class Core(Thread):
 
         self.unit0 = {}
         self.unit1 = {}
+        self.markerA = 0
+        self.markerB = 0
 
         self.snaps = {
             "unit0": {"A": [], "B": []},
@@ -31,7 +33,7 @@ class Core(Thread):
     def run(self):
         self.sockserver.start()
 
-    def distance(self):
+    def distance(self, data):
         pass
 
     # pos is unused, but needed
