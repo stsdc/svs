@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import errno
 import socket
 import sys
@@ -6,9 +7,8 @@ from time import sleep
 from events import Events
 from log import logger
 from network import HotSpot
-import pickle
-
-
+# import pickle
+import cPickle as pickle
 class SocketServer(Thread):
     def __init__(self, host, port):
         Thread.__init__(self)
@@ -45,13 +45,14 @@ class SocketServer(Thread):
             client = Client(self.server.accept())
             client.start()
             self.threads.append(client)
-            self.events.on_change(client.isAlive())
+            self.events.on_connected(client.isAlive())
 
     def stop(self):
         # close all client threads
         if self.server:
             self.server.close()
             logger.warning("SocketServer: Stop")
+            self.events.on_connected(False)
 
         if self.threads:
             for client in self.threads:
@@ -78,7 +79,7 @@ class Client(Thread):
         Thread.__init__(self)
         self.client = client
         self.address = address
-        self.size = 1024
+        self.size = 2048
         self.daemon = True
         self._stop_event = Event()
         self.events = Events()
@@ -88,15 +89,21 @@ class Client(Thread):
         running = 1
         while running:
             try:
-                data = self.client.recv(1024)
+                data = self.client.recv(self.size)
                 self.data = pickle.loads(data)
                 if self.data:
                     self.events.on_new_data(self.data)
                     self.client.sendall(data)
-            except socket.error as e:
+            except (socket.error, ValueError, pickle.PickleError) as e:
                 logger.error("SocketClient: %s", e)
+                self.stop()
                 running = 0
-
+            # probably solution: https://stackoverflow.com/a/44637925/1589989
+            except EOFError:
+                shrug = u"¯\_(ツ)_/¯"
+                logger.error("SocketClient: Pickle can't handle to much data. %s", shrug)
+                self.stop()
+                running = 0
         self.stop()
 
     def stop(self):

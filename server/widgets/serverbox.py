@@ -21,8 +21,8 @@ class ServerBox(Box):
         self.add(2, 0, "WLAN:")
         self.add(2, 7, "%16s" % self.net.wlan_ip())
 
-        self.add(5, 0, "CONNECTION:")
-        self.add(5, 11, "%12s" % "DISCONNECTED")
+        self.add(5, 0, "CONNECTED:")
+        self.add(5, 11, "%12s" % "NO")
 
         self.add(3, 0, "GPU TEMP:")
         self.add(3, 9, "%16s" % "")
@@ -31,7 +31,9 @@ class ServerBox(Box):
 
     def update_status(self, status):
         if status:
-            self.add(5, 11, "%12s" % "CONNECTED")
+            self.add(5, 11, "%12s" % "YES")
+        else:
+            self.add(5, 11, "%12s" % "NO")
 
     def _temperature(self):
         self._thread = threading.Timer(2.0, self._temperature)
