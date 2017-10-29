@@ -15,6 +15,7 @@ class SocketClient(object):
         self.port = port
         self.socket = socket.socket()
         self.socket.settimeout(5)
+        self.size = 2048
 
     def connect(self):
         while True:
@@ -47,7 +48,7 @@ class SocketClient(object):
         if not self.socket:
             logger.error('You have to connect first before receiving data')
         try:
-            data = self.socket.recv(1024)
+            data = self.socket.recv(self.size)
             deserialized = pickle.loads(data)
         except BaseException as e:
             logger.error('SocketClient: Some problem with deserialization')
