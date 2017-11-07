@@ -30,6 +30,7 @@ class Core(Thread):
         self.sockserver.events.on_connected += self.referencing_clients_to_core
 
 
+
     def run(self):
         self.sockserver.start()
 

@@ -1,15 +1,9 @@
-import serial
+from server.uart import Uart
 from log import logger
 
-
-class Radio:
-    def __init__(self):
-        try:
-            self.serial = serial.Serial('/dev/ttyUSB0', baudrate=115200, timeout=3.0)
-            logger.info("Radio: device: %s", self.serial.name)
-        except serial.SerialException as e:
-            logger.error("Radio: %s", e)
-
+class MobilePlatform:
+    def __init__(self, uart):
+        self.uart = uart
         self.prev_data = ""
 
     def send(self, motor_l, motor_r):
@@ -17,8 +11,8 @@ class Radio:
         # made this to send data only once, since keyboard module sends it over and
         # over again. Should be done in keyboard module
         if self.prev_data != data:
-            logger.debug("Radio: send: %s", data.replace("\r\n", ""))
-            self.serial.write(data)
+            logger.debug("MobilePlatform: send: %s", data.replace("\r\n", ""))
+            self.uart.write(data)
         self.prev_data = data
 
     def build_string(self, motor_l, motor_r):
@@ -38,6 +32,4 @@ class Radio:
             return "00" + power
         if len(power) == 2:
             return "0" + power
-
-
 

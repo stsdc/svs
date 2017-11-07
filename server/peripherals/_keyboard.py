@@ -3,7 +3,7 @@ from log import logger
 from events import Events
 
 
-class KeyboardControl:
+class Keyboard:
     def __init__(self):
         self.events = Events()
 

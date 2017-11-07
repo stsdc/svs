@@ -1,2 +1,1 @@
-from keyboardcontrol import KeyboardControl
-from bluedotcontrol import BlueDotControl
+from mobileplatform import MobilePlatform
