@@ -10,6 +10,8 @@ class Box(object):
 
         # Style properties
         self.bold = curses.A_BOLD
+        self.default_colors = None
+
 
     def wrap(self, h, w):
         self.window.box()
@@ -32,8 +34,10 @@ class Box(object):
 
     def set_colors_scheme(self):
         curses.init_pair(44, 43, 0)
+        self.default_colors = curses.color_pair(44)
         self.window.bkgd(' ', curses.color_pair(44))
 
     def add(self, line_y, line_x, text, style = curses.A_NORMAL):
         self.box.addstr(line_y, line_x, text, style)
         self.refresh()
+

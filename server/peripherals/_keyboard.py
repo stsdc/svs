@@ -10,6 +10,7 @@ class Keyboard:
         # refresh UI
         keyboard.add_hotkey('r', self.refresh)
 
+        # control Mobile Platform
         keyboard.add_hotkey('w', self.forward)
         keyboard.add_hotkey('s', self.backward)
         keyboard.add_hotkey('a', self.left)

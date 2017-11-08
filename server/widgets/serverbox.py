@@ -10,7 +10,9 @@ class ServerBox(Box):
 
         self._thread = None
 
-        self.title("Server-Main Unit")
+        self.set_colors_scheme()
+
+        self.title("Server")
 
         self.add(0, 0, "PID:")
         self.add(0, 7, "%16s" % os.getpid())
@@ -21,11 +23,13 @@ class ServerBox(Box):
         self.add(2, 0, "WLAN:")
         self.add(2, 7, "%16s" % self.net.wlan_ip())
 
-        self.add(5, 0, "CONNECTED:")
-        self.add(5, 11, "%12s" % "NO")
-
         self.add(3, 0, "GPU TEMP:")
         self.add(3, 9, "%16s" % "")
+
+        self.add(3, 0, "", self.default_colors)
+
+        self.add(5, 0, "CONNECTED:")
+        self.add(5, 11, "%12s" % "NO")
 
         self._temperature()
 
@@ -42,7 +46,8 @@ class ServerBox(Box):
         celsius = c.encode('utf-8')
         res = os.popen("vcgencmd measure_temp").readline()
         res = (res.replace("temp=", "").replace("'", celsius))
-        self.add(3, 9, "%16s" % res)
+        self.add(3, 9, "%16s" % res, self.default_colors)
+        self.set_colors_scheme()
 
     def close(self):
         self._thread.cancel()
