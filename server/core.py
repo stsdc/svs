@@ -3,7 +3,8 @@ from threading import Thread, Event
 from steerage import Steerage
 from log import logger
 from events import Events
-
+from control import Manipulator, MobilePlatform
+from uart import Uart
 
 class Core(Thread):
     def __init__(self):
@@ -12,7 +13,12 @@ class Core(Thread):
 
         self.events = Events()
 
-        Steerage()
+        # Init uart and control MP & Manipulator
+        self.uart = Uart()
+        self.manipulator = Manipulator(self.uart)
+        self.mobile_platform = MobilePlatform(self.uart)
+
+        Steerage(self.manipulator, self.mobile_platform)
 
         self.unit0 = {}
         self.unit1 = {}
@@ -28,6 +34,7 @@ class Core(Thread):
         self.sockserver = SocketServer("", 50000)
 
         self.sockserver.events.on_connected += self.referencing_clients_to_core
+        # self.manipulator.events.on_data += self.update_manipulator_ui
 
 
 
@@ -47,6 +54,7 @@ class Core(Thread):
 
     def __stop(self):
         self.sockserver.stop()
+        self.manipulator.stop()
 
     # this looks really lame
     def referencing_clients_to_core(self, is_connected):
@@ -63,3 +71,4 @@ class Core(Thread):
     def update_unit0(self, data):
         # self.distance()
         self.events.update_unit0_ui(data["markers"])
+

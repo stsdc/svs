@@ -1,13 +1,9 @@
 from peripherals import Keyboard
-from uart import Uart
-from control import MobilePlatform, Manipulator
 
 class Steerage:
-    def __init__(self):
-        # Init uart and control MP & Manipulator
-        self.uart = Uart()
-        self.mobile_platform = MobilePlatform(self.uart)
-        self.manipulator = Manipulator(self.uart)
+    def __init__(self, manipulator, mobile_platform):
+        self.manipulator = manipulator
+        self.mobile_platform = mobile_platform
 
         # Init keyboard control
         self.keyboard = Keyboard()

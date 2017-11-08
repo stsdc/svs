@@ -26,7 +26,7 @@ class ServerBox(Box):
         self.add(3, 0, "GPU TEMP:")
         self.add(3, 9, "%16s" % "")
 
-        self.add(3, 0, "", self.default_colors)
+        # self.add(4, 0, "", self.default_colors)
 
         self.add(5, 0, "CONNECTED:")
         self.add(5, 11, "%12s" % "NO")

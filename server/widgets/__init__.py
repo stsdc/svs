@@ -3,3 +3,4 @@ from .headerbox import HeaderBox
 from .screen import Screen
 from .serverbox import ServerBox
 from .clientbox import ClientBox
+from .manipulatorbox import ManipulatorBox
