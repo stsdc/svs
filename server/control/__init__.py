@@ -1,1 +1,2 @@
 from mobileplatform import MobilePlatform
+from manipulator import Manipulator

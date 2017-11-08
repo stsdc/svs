@@ -2,13 +2,18 @@ from widgets import LogBox, HeaderBox, Screen, ServerBox, ClientBox
 from network import Network
 from log import logger
 from core import Core
+from peripherals import Keyboard
 import os
 from time import sleep
 
 
 class UI():
     def __init__(self):
+        self.keyboard = Keyboard()
+
         self.screen = Screen()
+
+        self.keyboard.events.refresh += self.refresh
 
         self.client0 = None
 
@@ -51,4 +56,7 @@ class UI():
         self.serverbox.close()
         self.core.join()
         self.screen.stop()
+
+    def refresh(self):
+        self.screen.refresh()
 

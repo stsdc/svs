@@ -6,7 +6,7 @@ class Screen(object):
     def __init__(self):
         self.maxx = None
         self.maxy = None
-
+        self.stdscr = None
         self.run()
 
     def run(self):
@@ -19,6 +19,7 @@ class Screen(object):
             curses.init_pair(i + 1, i, -1)
 
     def init_screen(self, stdscr):
+        self.stdscr = stdscr
         curses.curs_set(0)
         curses.flushinp()
         stdscr.nodelay(1)
@@ -35,3 +36,6 @@ class Screen(object):
         curses.nocbreak()
         # curses.echo()
         curses.endwin()
+
+    def refresh(self):
+        self.stdscr.refresh()
