@@ -25,10 +25,8 @@ class Manipulator:
         packet = None
 
         response = self.uart.readline()
-        response = response[3:]
-        time = response[:8]
-        self.events.on_data(self.hascii82dec(time))
-        logger.debug(self.hascii82dec(time))
+        logger.debug(response[3:])
+        self.events.on_data(self.parse(response))
 
     def hascii82dec(self, data):
         try:
@@ -37,7 +35,19 @@ class Manipulator:
         except ValueError as e:
             logger.error("Manipulator: %s", e)
 
+    def parse(self, response):
+        # the first three characters are junk
+        response = response[3:]
+        # slicing bytearray and converting to dec
+        return {
+            "time": self.hascii82dec(response[0:8]),
+            "adc0": self.hascii82dec(response[8:11]),
+            "adc1": self.hascii82dec(response[11:14]),
+            "adc2": self.hascii82dec(response[14:17]),
+            "current": self.hascii82dec(response[17:20]),
+            "velocity": self.hascii82dec(response[20:28]),
+            "position": self.hascii82dec(response[28:36]),
+        }
+
     def stop(self):
         self._thread.cancel()
-
-

@@ -60,9 +60,14 @@ class UI():
 
     def stop(self):
         self.serverbox.close()
+        self.core.manipulator.stop()
         self.core.join()
         self.screen.stop()
 
     def refresh(self):
-        self.screen.refresh()
+        self.headerbox.refresh()
+        self.logbox.refresh()
+        self.manipulatorbox.refresh()
+        self.clientbox0.refresh()
+        self.serverbox.refresh()
 
