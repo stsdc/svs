@@ -37,6 +37,7 @@ class Keyboard:
             self.events.stop()
 
     def refresh(self):
+        logger.debug("refresh")
         self.events.refresh()
 
     def get_some_debug_data(self):

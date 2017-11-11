@@ -24,8 +24,7 @@ class UI():
         self.headerbox = HeaderBox(1, self.maxx, 0, 0)
         self.serverbox = ServerBox(13, 25, 2, 2)
         self.clientbox0 = ClientBox(13, 50, 2, 30)
-        self.clientbox0.title("Client0")
-        self.manipulatorbox = ManipulatorBox(13, 25, 16, 2)
+        self.manipulatorbox = ManipulatorBox(13, 78, 16, 2)
         self.logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 
         self.core = Core()
@@ -55,7 +54,7 @@ class UI():
         self.clientbox0.update_data(data)
 
     def update_manipulator(self, data):
-        self.show_data(data)
+        # self.show_data(data)
         self.manipulatorbox.update(data)
 
     def stop(self):

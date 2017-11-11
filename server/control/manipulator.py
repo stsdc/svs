@@ -25,7 +25,7 @@ class Manipulator:
         packet = None
 
         response = self.uart.readline()
-        logger.debug(response[3:])
+        # response = response.encode('hex')
         self.events.on_data(self.parse(response))
 
     def hascii82dec(self, data):
@@ -37,16 +37,25 @@ class Manipulator:
 
     def parse(self, response):
         # the first three characters are junk
-        response = response[3:]
+        response = response[2:]
+        logger.debug("Manipulator: %s", response)
         # slicing bytearray and converting to dec
         return {
-            "time": self.hascii82dec(response[0:8]),
-            "adc0": self.hascii82dec(response[8:11]),
-            "adc1": self.hascii82dec(response[11:14]),
-            "adc2": self.hascii82dec(response[14:17]),
-            "current": self.hascii82dec(response[17:20]),
-            "velocity": self.hascii82dec(response[20:28]),
-            "position": self.hascii82dec(response[28:36]),
+            "current1": response[13:16],  # 13, 14, 15
+            "velocity1": response[16:24],
+            "position1": response[24:32],
+
+            "current2": response[32:35],
+            "velocity2": response[35:43],
+            "position2": response[43:51],
+
+            "current3": response[51:54],
+            "velocity3": response[54:62],
+            "position3": response[62:70],
+
+            "current4": response[70:73],
+            "velocity4": response[73:81],
+            "position4": response[81:89],
         }
 
     def stop(self):
