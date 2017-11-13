@@ -5,25 +5,21 @@ class ManipulatorBox(Box):
     def __init__(self, h, w, y, x):
         super(ManipulatorBox, self).__init__(h, w, y, x)
 
-        self._thread = None
+        # self._thread = None
 
         self.title("Manipulator")
+        self.set_colors_scheme()
 
         self.add(0, 11, "%13s" % "MOTOR 1", self.bold)
         self.add(0, 29, "%9s" % "MOTOR 2",self.bold)
         self.add(0, 49, "%9s" % "MOTOR 3", self.bold)
         self.add(0, 67, "%9s" % "MOTOR 4", self.bold)
-        #
-        # self.add(0, 7, "%16s" % "N/A")
-        #
-        self.add(1, 0, "CURRENT:")
-        # self.add(1, 7, "%16s" % "N/A")
-        #
-        self.add(2, 0, "VELOCITY:")
-        # self.add(2, 7, "%16s" % "N/A")
-        #
-        self.add(3, 0, "POSITION:")
-        # self.add(3, 7, "%16s" % "N/A")
+
+        self.add(1, 0, "CURRENT:", self.bold)
+
+        self.add(2, 0, "VELOCITY:", self.bold)
+
+        self.add(3, 0, "POSITION:", self.bold)
 
         # self.add(4, 0, "ADC4:")
         #
@@ -35,8 +31,6 @@ class ManipulatorBox(Box):
         #
         # self.add(6, 0, "POSITION:")
         # self.add(6, 11, "%12s" % "N/A")
-
-        self.set_colors_scheme()
 
     def update(self, data):
         if data is not None:
@@ -56,5 +50,5 @@ class ManipulatorBox(Box):
             self.add(2, 66, "%10s" % data["velocity4"], self.default_colors)
             self.add(3, 66, "%10s" % data["position4"], self.default_colors)
         else:
-            self.add(0, 7, "%16s" % "N/A", self.default_colors)
+            self.add(1, 11, "%13s" % "N/A", self.default_colors)
 

@@ -23,7 +23,8 @@ class UI():
         # UI elements
         self.headerbox = HeaderBox(1, self.maxx, 0, 0)
         self.serverbox = ServerBox(13, 25, 2, 2)
-        self.clientbox0 = ClientBox(13, 50, 2, 30)
+        self.clientbox0 = ClientBox(13, 50, 2, 30, "Client1")
+        self.clientbox1 = ClientBox(13, 50, 2, 80, "Client2")
         self.manipulatorbox = ManipulatorBox(13, 78, 16, 2)
         self.logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 

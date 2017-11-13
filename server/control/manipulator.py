@@ -37,7 +37,7 @@ class Manipulator:
         # the first three characters are junk
         response = response[2:]
 
-        logger.debug("Manipulator: %s", response)
+        logger.debug("Manipulator: Recieved: %s", response)
         return {
             "current1": h.decode(response[13:16]),  # 13, 14, 15
             "velocity1": h.decode(response[16:24]),

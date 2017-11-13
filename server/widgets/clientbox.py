@@ -1,15 +1,17 @@
 from box import Box
 import os
-import threading
+
+
+# import threading
 
 
 class ClientBox(Box):
-    def __init__(self, h, w, y, x):
+    def __init__(self, h, w, y, x, title="Client"):
         super(ClientBox, self).__init__(h, w, y, x)
 
-        self._thread = None
+        # self._thread = None
 
-        self.title("Client-Unit0")
+        self.title(title)
 
         self.add(1, 7, "MARKER A", self.bold)
 

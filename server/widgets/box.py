@@ -36,6 +36,8 @@ class Box(object):
         curses.init_pair(44, 43, 0)
         self.default_colors = curses.color_pair(44)
         self.window.bkgd(' ', curses.color_pair(44))
+        if self.box:
+            self.box.bkgd(' ', curses.color_pair(44))
 
     def add(self, line_y, line_x, text, style = curses.A_NORMAL):
         self.box.addstr(line_y, line_x, text, style)

@@ -1,5 +1,5 @@
 import curses
-from threading import Thread
+# from threading import Thread
 
 
 class Screen(object):
