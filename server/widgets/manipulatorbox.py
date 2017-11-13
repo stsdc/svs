@@ -44,17 +44,17 @@ class ManipulatorBox(Box):
             self.add(2, 11, "%13s" % data["velocity1"], self.default_colors)
             self.add(3, 11, "%13s" % data["position1"], self.default_colors)
 
-            self.add(1, 29, "%9s" % data["current2"], self.default_colors)
-            self.add(2, 29, "%9s" % data["velocity2"], self.default_colors)
-            self.add(3, 29, "%9s" % data["position2"], self.default_colors)
+            self.add(1, 28, "%10s" % data["current2"], self.default_colors)
+            self.add(2, 28, "%10s" % data["velocity2"], self.default_colors)
+            self.add(3, 28, "%10s" % data["position2"], self.default_colors)
 
-            self.add(1, 49, "%9s" % data["current3"], self.default_colors)
-            self.add(2, 49, "%9s" % data["velocity3"], self.default_colors)
-            self.add(3, 49, "%9s" % data["position3"], self.default_colors)
+            self.add(1, 48, "%10s" % data["current3"], self.default_colors)
+            self.add(2, 48, "%10s" % data["velocity3"], self.default_colors)
+            self.add(3, 48, "%10s" % data["position3"], self.default_colors)
 
-            self.add(1, 67, "%9s" % data["current4"], self.default_colors)
-            self.add(2, 67, "%9s" % data["velocity4"], self.default_colors)
-            self.add(3, 67, "%9s" % data["position4"], self.default_colors)
+            self.add(1, 66, "%10s" % data["current4"], self.default_colors)
+            self.add(2, 66, "%10s" % data["velocity4"], self.default_colors)
+            self.add(3, 66, "%10s" % data["position4"], self.default_colors)
         else:
             self.add(0, 7, "%16s" % "N/A", self.default_colors)
 

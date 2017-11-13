@@ -18,7 +18,7 @@ class CursesHandler(logging.Handler):
             screen = self.screen
             screen.addstr(u'\n%s' % msg, self.get_color_pair(record.levelname))
             screen.refresh()
-        except (KeyboardInterrupt, SystemExit):
+        except (KeyboardInterrupt, SystemExit, UnicodeDecodeError):
             raise
         except:
             self.handleError(record)

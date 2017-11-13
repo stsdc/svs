@@ -21,7 +21,11 @@ class Uart:
         self.serial.write(data)
 
     def readline(self):
-        return self.serial.readline()
+        try:
+            return self.serial.readline()
+        except serial.SerialException as e:
+            logger.error("UART: %s", e)
+            return 0
 
 
 
