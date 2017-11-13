@@ -19,6 +19,7 @@ class Steerage:
 
         # Control Manipulator via keyboard
         self.keyboard.events.get_some_debug_data += self.rbc_test
+        self.keyboard.events.motor1_inc_pos += self.motor1_inc_pos
 
         self.motor_power = 20
 
@@ -42,4 +43,7 @@ class Steerage:
         self.mobile_platform.send(0 * self.motor_power, 0 * self.motor_power)
 
     def rbc_test(self):
-        self.manipulator.rbc_test()
+        self.manipulator.get_status()
+
+    def motor1_inc_pos(self):
+        self.manipulator.motor1_inc_pos()

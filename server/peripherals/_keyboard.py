@@ -7,7 +7,7 @@ class Keyboard:
     def __init__(self):
         self.events = Events()
 
-        # refresh UI
+        # refresh UI - doesn't work -> remove
         keyboard.add_hotkey('r', self.refresh)
 
         # control Mobile Platform
@@ -17,6 +17,9 @@ class Keyboard:
         keyboard.add_hotkey('d', self.right)
 
         keyboard.add_hotkey('z', self.get_some_debug_data)
+
+        # control Manipulator
+        keyboard.add_hotkey('up', self.motor1_inc_pos)
 
         keyboard.on_release(self.stop)
 
@@ -42,6 +45,9 @@ class Keyboard:
 
     def get_some_debug_data(self):
         self.events.get_some_debug_data()
+
+    def motor1_inc_pos(self):
+        self.events.motor1_inc_pos()
 
     # retuns True if pressed/released key is WSAD
     @staticmethod
