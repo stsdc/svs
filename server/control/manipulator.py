@@ -11,10 +11,11 @@ class Manipulator:
         self.events = Events()
         self.uart = uart
 
-        self.get_status()
+        # self.get_status()
 
         self.get_info()
-        # self.motor1_inc_pos()
+        self.motor1_inc_pos()
+        # self.get_info()
 
     def get_status(self):
         self._thread = threading.Timer(0.5, self.get_status)
@@ -22,7 +23,7 @@ class Manipulator:
 
         packet = bytearray()
         packet.append(0xFF)
-        packet.append(0x21)
+        packet.append(0x22)
         packet.append(0x2A)
         packet.append(0x0A)
 
@@ -77,12 +78,15 @@ class Manipulator:
     def motor1_inc_pos(self):
         packet = bytearray()
         packet.append(0xFF)
-        packet.append(0x21)
+        packet.append(0x22)
         packet.append(0x21)
         #
         # packet.append(0x30)
         # packet.append(0x30)
         # packet.append(0x30)
+        # data = h.encode8(100)
+        # logger.debug(data)
+        # packet.fromhex()
 
         packet.append(0x30)
         packet.append(0x30)
@@ -98,9 +102,9 @@ class Manipulator:
         packet.append(0x30)
         packet.append(0x30)
         packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x42)
+        packet.append(0x46)
+        packet.append(0x46)
+        packet.append(0x46)
 
         packet.append(0x30)
         packet.append(0x30)
@@ -109,16 +113,16 @@ class Manipulator:
         packet.append(0x30)
         packet.append(0x30)
         packet.append(0x30)
-        packet.append(0x43)
+        packet.append(0x30)
 
         packet.append(0x30)
         packet.append(0x30)
         packet.append(0x30)
         packet.append(0x30)
         packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x44)
+        packet.append(0x46)
+        packet.append(0x46)
+        packet.append(0x46)
 
         packet.append(0x0A)
         self.uart.write(packet)
@@ -127,9 +131,9 @@ class Manipulator:
     def get_info(self):
         packet = bytearray()
         packet.append(0xFF)
-        packet.append(0x21)
+        packet.append(0x22)
         packet.append(0x54)
-        packet.append(0x32)  # silnik
+        packet.append(0x33)  # silnik
         packet.append(0x31)  # tak musi byc
         packet.append(0x30)
         packet.append(0x0A)

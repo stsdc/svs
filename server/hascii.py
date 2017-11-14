@@ -19,7 +19,7 @@ def decode(data):
         logger.error("HAscii: %s", e)
 
 
-# encoded8 = encode8(1234)
+# encoded8 = encode8(100)
 # encoded3 = encode3(1234)
 
 # decoded = decode("4D2")

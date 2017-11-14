@@ -21,6 +21,7 @@ class ManipulatorBox(Box):
 
         self.add(3, 0, "POSITION:", self.bold)
 
+
         # self.add(4, 0, "ADC4:")
         #
         # self.add(4, 0, "CURRENT:")
@@ -51,4 +52,6 @@ class ManipulatorBox(Box):
             self.add(3, 66, "%10s" % data["position4"], self.default_colors)
         else:
             self.add(1, 11, "%13s" % "N/A", self.default_colors)
+
+
 

@@ -60,7 +60,7 @@ class UI():
 
     def stop(self):
         self.serverbox.close()
-        self.core.manipulator.stop()
+        # self.core.manipulator.stop()
         self.core.join()
         self.screen.stop()
 
