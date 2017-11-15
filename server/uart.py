@@ -6,12 +6,10 @@ class Uart:
     def __init__(self):
         self.serial = None
         try:
-            self.serial = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=3.0)
+            self.serial = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=0)
             logger.info("UART: device: %s", self.serial.name)
         except serial.SerialException as e:
             logger.error("UART: %s", e)
-
-        self.prev_data = ""
 
         # while True:
         #     self.rbc_test()

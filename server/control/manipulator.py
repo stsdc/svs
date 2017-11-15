@@ -7,32 +7,22 @@ import server.hascii as h
 
 class Manipulator:
     def __init__(self, uart):
-        self._thread = None
         self.events = Events()
         self.uart = uart
-
-        # self.get_status()
-
-        self.get_info()
-        self.motor1_inc_pos()
-        # self.get_info()
+        self.prev_data = None
 
     def get_status(self):
-        self._thread = threading.Timer(0.5, self.get_status)
-        self._thread.start()
-
         packet = bytearray()
         packet.append(0xFF)
         packet.append(0x22)
         packet.append(0x2A)
         packet.append(0x0A)
 
-
         self.uart.write(packet)
-        packet = None
+        del packet
 
         response = self.uart.readline()
-        # response = response.encode('hex')
+
         self.events.on_data(self.parse(response))
 
     def parse(self, response):
@@ -58,63 +48,41 @@ class Manipulator:
             "position4": h.decode(response[81:89]),
         }
 
-        # return {
-        #     "current1": response[13:16],  # 13, 14, 15
-        #     "velocity1": response[16:24],
-        #     "position1": response[24:32],
-        #
-        #     "current2": response[32:35],
-        #     "velocity2": response[35:43],
-        #     "position2": response[43:51],
-        #
-        #     "current3": response[51:54],
-        #     "velocity3": response[54:62],
-        #     "position3": response[62:70],
-        #
-        #     "current4":response[70:73],
-        #     "velocity4": response[73:81],
-        #     "position4": response[81:89],
-        # }
-
     def motor1_inc_pos(self):
-
         packet = bytearray()
         packet.append(0xFF)
-        packet.append(0x22)
         packet.append(0x21)
-        #
-        # packet.append(0x30)
-        # packet.append(0x30)
-        # packet.append(0x30)
+        packet.append(0x21)
 
-        packet.extend(h.encode8(4095))
+        # 0 -> 0x30 -> 0%
 
-        packet.extend(h.encode8(4095)) # black
+        # ON RbC-4242
+        # 0x22: [MOT10 -> PIN10 MOT1 -> PIN1] [MOT3 -> PIN10 MOT2 -> PIN1]
+        # 0x21: [MOT1 -> PIN1 MOT2 -> PIN10] [MOT3 -> PIN1 MOT2 -> PIN10]
 
-        packet.extend(h.encode8(0)) # max
-
-        packet.extend(h.encode8(4095)) # black
-
+        packet.extend(h.encode8(0))
+        packet.extend(h.encode8(1300))  # MOT1
+        packet.extend(h.encode8(0))
+        packet.extend(h.encode8(0))
 
         packet.append(0x0A)
-        self.uart.write(packet)
+
+        if self.prev_data != packet:
+            self.uart.write(packet)
+            self.prev_data = packet
         logger.debug(binascii.hexlify(packet))
 
-    def get_info(self):
+    def halt(self):
         packet = bytearray()
         packet.append(0xFF)
-        packet.append(0x22)
-        packet.append(0x54)
-        packet.append(0x33)  # silnik
-        packet.append(0x31)  # tak musi byc
-        packet.append(0x30)
+        packet.append(0x21)
+        packet.append(0x21)
+        # 4095 -> 0xFF 0xFF 0xFF -> 100%
+        packet.extend(h.encode8(4095))
+        packet.extend(h.encode8(4095))
+        packet.extend(h.encode8(4095))
+        packet.extend(h.encode8(4095))
         packet.append(0x0A)
 
         self.uart.write(packet)
-
-        response = self.uart.readline()
-
-        logger.debug(response[2:])
-
-    def stop(self):
-        self._thread.cancel()
+        self.prev_data = packet

@@ -20,8 +20,10 @@ class Keyboard:
 
         # control Manipulator
         keyboard.add_hotkey('up', self.motor1_inc_pos)
+        keyboard.add_hotkey('u', self.manipulator_status_update)
 
-        keyboard.on_release(self.stop)
+
+        keyboard.on_release(self.halt)
 
     def forward(self):
         self.events.forward()
@@ -35,9 +37,12 @@ class Keyboard:
     def right(self):
         self.events.right()
 
-    def stop(self, event):
+    def halt(self, event):
         if self.is_mobile_platform_steerage_keys(event):
-            self.events.stop()
+            self.events.mobile_platform_halt()
+
+        if self.is_manipulator_steerage_keys(event):
+            self.events.manipulator_halt()
 
     def refresh(self):
         logger.debug("refresh")
@@ -49,6 +54,9 @@ class Keyboard:
     def motor1_inc_pos(self):
         self.events.motor1_inc_pos()
 
+    def manipulator_status_update(self):
+        self.events.manipulator_status_update()
+
     # retuns True if pressed/released key is WSAD
     @staticmethod
     def is_mobile_platform_steerage_keys(event):
@@ -56,3 +64,10 @@ class Keyboard:
                 keyboard.matches(event, 's') or
                 keyboard.matches(event, 'a') or
                 keyboard.matches(event, 'd'))
+
+    @staticmethod
+    def is_manipulator_steerage_keys(event):
+        return (keyboard.matches(event, 'up') or
+                keyboard.matches(event, 'down') or
+                keyboard.matches(event, 'left') or
+                keyboard.matches(event, 'right'))

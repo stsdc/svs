@@ -15,11 +15,13 @@ class Steerage:
         self.keyboard.events.backward += self.backward
         self.keyboard.events.left += self.left
         self.keyboard.events.right += self.right
-        self.keyboard.events.stop += self.stop
+        self.keyboard.events.mobile_platform_halt += self.mobile_platform_halt
 
         # Control Manipulator via keyboard
         self.keyboard.events.get_some_debug_data += self.rbc_test
         self.keyboard.events.motor1_inc_pos += self.motor1_inc_pos
+        self.keyboard.events.manipulator_halt += self.manipulator_halt
+        self.keyboard.events.manipulator_status_update += self.manipulator_status_update
 
         self.motor_power = 20
 
@@ -38,7 +40,7 @@ class Steerage:
     def right(self):
         self.mobile_platform.send(1 * self.motor_power, int(0.2 * self.motor_power))
 
-    def stop(self):
+    def mobile_platform_halt(self):
         # Stop gracefully
         self.mobile_platform.send(0 * self.motor_power, 0 * self.motor_power)
 
@@ -47,3 +49,9 @@ class Steerage:
 
     def motor1_inc_pos(self):
         self.manipulator.motor1_inc_pos()
+
+    def manipulator_halt(self):
+        self.manipulator.halt()
+
+    def manipulator_status_update(self):
+        self.manipulator.get_status()

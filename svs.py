@@ -22,8 +22,7 @@ def kill_another_instances():
     print 'Instance already running...'
     child = subprocess.Popen(['pgrep', '-f', "svs.py"], stdout=subprocess.PIPE, shell=False)
     pids = child.communicate()[0].split()
-    print pids
-    print os.getpid(), os.getppid()
+    print "PID, PPID:", os.getpid(), os.getppid()
     for pid in pids:
         try:
             if int(pid) != os.getppid():
