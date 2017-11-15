@@ -53,6 +53,7 @@ class Core(Thread):
 
 
     def __stop(self):
+        self.uart.stop()
         self.sockserver.stop()
 
     # this looks really lame

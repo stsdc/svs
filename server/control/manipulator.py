@@ -70,7 +70,7 @@ class Manipulator:
         if self.prev_data != packet:
             self.uart.write(packet)
             self.prev_data = packet
-        logger.debug(binascii.hexlify(packet))
+            logger.debug(binascii.hexlify(packet))
 
     def halt(self):
         packet = bytearray()
