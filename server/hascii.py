@@ -1,9 +1,10 @@
 import binascii
 from log import logger
 
+
 def encode8(data):
     hexed = format(data, '08X')
-    return binascii.hexlify(str(hexed))
+    return [ord(x) for x in hexed]
 
 
 def encode3(data):
@@ -18,10 +19,9 @@ def decode(data):
     except ValueError as e:
         logger.error("HAscii: %s", e)
 
-
 # encoded8 = encode8(100)
 # encoded3 = encode3(1234)
-
+#
 # decoded = decode("4D2")
 # print "Encoded: ", encoded8, encoded3
 # print "Decoded: ", decoded

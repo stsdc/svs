@@ -27,6 +27,7 @@ class Manipulator:
         packet.append(0x2A)
         packet.append(0x0A)
 
+
         self.uart.write(packet)
         packet = None
 
@@ -38,7 +39,7 @@ class Manipulator:
         # the first three characters are junk
         response = response[2:]
 
-        logger.debug("Manipulator: Recieved: %s", response)
+        # logger.debug("Manipulator: Recieved: %s", response)
         return {
             "current1": h.decode(response[13:16]),  # 13, 14, 15
             "velocity1": h.decode(response[16:24]),
@@ -76,6 +77,7 @@ class Manipulator:
         # }
 
     def motor1_inc_pos(self):
+
         packet = bytearray()
         packet.append(0xFF)
         packet.append(0x22)
@@ -84,45 +86,15 @@ class Manipulator:
         # packet.append(0x30)
         # packet.append(0x30)
         # packet.append(0x30)
-        # data = h.encode8(100)
-        # logger.debug(data)
-        # packet.fromhex()
 
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x41)
+        packet.extend(h.encode8(4095))
 
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x46)
-        packet.append(0x46)
-        packet.append(0x46)
+        packet.extend(h.encode8(4095)) # black
 
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
+        packet.extend(h.encode8(0)) # max
 
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x30)
-        packet.append(0x46)
-        packet.append(0x46)
-        packet.append(0x46)
+        packet.extend(h.encode8(4095)) # black
+
 
         packet.append(0x0A)
         self.uart.write(packet)
