@@ -61,7 +61,15 @@ class Manipulator:
         # 0x21: [MOT1 -> PIN1 MOT2 -> PIN10] [MOT3 -> PIN1 MOT2 -> PIN10]
 
         packet.extend(h.encode8(0))
-        packet.extend(h.encode8(1300))  # MOT1
+        packet.extend(h.encode8(-1400))  # MOT1
+        # packet.append(0x46)
+        # packet.append(0x46)
+        # packet.append(0x46)
+        # packet.append(0x46)
+        # packet.append(0x46)
+        # packet.append(0x46)
+        # packet.append(0x34)
+        # packet.append(0x34)
         packet.extend(h.encode8(0))
         packet.extend(h.encode8(0))
 

@@ -1,15 +1,26 @@
 import binascii
 from log import logger
 
+# This are maximum values for 3 & 8 character HAscii ranges
+MAX3 = 4095  # => 0xFFF
+MAX4 = 65535  # => 0xFFFF
+MAX8 = 4294967295  # => 0xFFFFFFFF
+
 
 def encode8(data):
-    hexed = format(data, '08X')
+    if data >= 0:
+        hexed = format(data, '08X')
+    else:
+        hexed = format(MAX8 - abs(data), '08X')
     return [ord(x) for x in hexed]
 
 
 def encode3(data):
-    hexed = format(data, '03X')
-    return binascii.hexlify(str(hexed))
+    if data >= 0:
+        hexed = format(data, '03X')
+    else:
+        hexed = format(MAX3 - abs(data), '03X')
+    return [ord(x) for x in hexed]
 
 
 def decode(data):

@@ -6,6 +6,7 @@ from events import Events
 from control import Manipulator, MobilePlatform
 from uart import Uart
 
+
 class Core(Thread):
     def __init__(self):
         Thread.__init__(self)
@@ -30,7 +31,6 @@ class Core(Thread):
 
         self.distance = None
 
-
     def run(self):
         self.sockserver.start()
         self.uart.start()
@@ -38,7 +38,6 @@ class Core(Thread):
         self.uart.events.on_connected += self.start_control
         self.sockserver.events.on_connected += self.referencing_clients_to_core
         # self.manipulator.events.on_data += self.update_manipulator_ui
-
 
     def start_control(self):
         # Only when serial is connected
@@ -56,7 +55,6 @@ class Core(Thread):
 
     def area(self):
         pass
-
 
     def __stop(self):
         self.uart.stop()
@@ -77,4 +75,3 @@ class Core(Thread):
     def update_unit0(self, data):
         # self.distance()
         self.events.update_unit0_ui(data["markers"])
-
