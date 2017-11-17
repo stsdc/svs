@@ -9,16 +9,14 @@ from uart import Uart
 class Core(Thread):
     def __init__(self):
         Thread.__init__(self)
-        self.daemon = True
+        # self.daemon = True
 
         self.events = Events()
 
-        # Init uart and control MP & Manipulator
+        self.sockserver = SocketServer("", 50000)
         self.uart = Uart()
-        if self.uart.serial:
-            self.manipulator = Manipulator(self.uart)
-            self.mobile_platform = MobilePlatform(self.uart)
-            Steerage(self.manipulator, self.mobile_platform)
+        self.manipulator = None
+        self.mobile_platform = None
 
         self.unit0 = {}
         self.unit1 = {}
@@ -31,15 +29,23 @@ class Core(Thread):
         }
 
         self.distance = None
-        self.sockserver = SocketServer("", 50000)
-
-        self.sockserver.events.on_connected += self.referencing_clients_to_core
-        # self.manipulator.events.on_data += self.update_manipulator_ui
-
 
 
     def run(self):
         self.sockserver.start()
+        self.uart.start()
+
+        self.uart.events.on_connected += self.start_control
+        self.sockserver.events.on_connected += self.referencing_clients_to_core
+        # self.manipulator.events.on_data += self.update_manipulator_ui
+
+
+    def start_control(self):
+        # Only when serial is connected
+        if self.uart.serial:
+            self.manipulator = Manipulator(self.uart)
+            self.mobile_platform = MobilePlatform(self.uart)
+            Steerage(self.manipulator, self.mobile_platform)
 
     def distance(self, data):
         pass

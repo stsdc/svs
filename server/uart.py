@@ -3,15 +3,20 @@ import serial.tools.list_ports
 from log import logger
 from time import sleep
 from threading import Thread
+from events import Events
 
 
-class Uart:
+class Uart(Thread):
     def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.events = Events()
         self.BAUD = 57600
         self.TIMEOUT = 0
         self.serial = None
-        self._waiter_thread = None
 
+
+    def run(self):
         self.waiter()
 
     def write(self, data):
@@ -25,22 +30,19 @@ class Uart:
             return 0
 
     def waiter(self):
-        self._waiter_thread = Thread(target=self.waiter, args = (10, ))
-        self._waiter_thread.daemon = True
-        self._waiter_thread.start()
-        logger.info("UART: Waiting for serial device")
         while self.serial is None:
+            logger.info("UART: Waiting for serial device")
             for port in self.available_ports():
                 if "USB" in port.name:
                     logger.info("UART: Found device: %s %s", port.name, port.manufacturer)
                     self.connect(port.device)
 
             sleep(2)
-        # self._waiter_thread.join()
 
     def connect(self, device):
         try:
             self.serial = serial.Serial(device, baudrate=self.BAUD, timeout=self.TIMEOUT)
+            self.events.on_connected()
             logger.info("UART: Connected")
         except serial.SerialException as e:
             logger.error("UART: %s", e)
@@ -49,4 +51,4 @@ class Uart:
         return serial.tools.list_ports.comports()
 
     def stop(self):
-        self._waiter_thread.join()
+        self.join()

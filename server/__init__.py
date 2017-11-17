@@ -29,11 +29,10 @@ class UI():
         self.logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 
         self.core = Core()
+
         self.core.sockserver.events.on_connected += self.update_server_status
         self.core.events.update_unit0_ui += self.update_client0
-        self.core.manipulator.events.on_data += self.update_manipulator
-
-        self.start_ui()
+        # self.core.manipulator.events.on_data += self.update_manipulator
 
     def start_ui(self):
         # self.init_screen(stdscr)

@@ -9,6 +9,8 @@ from log import logger
 from network import HotSpot
 # import pickle
 import cPickle as pickle
+
+
 class SocketServer(Thread):
     def __init__(self, host, port):
         Thread.__init__(self)

@@ -11,7 +11,8 @@ locale.setlocale(locale.LC_ALL, 'C.UTF-8')
 def run_system():
     if socket.gethostname() == 'main_unit':
         from server import UI
-        UI()
+        ui = UI()
+        ui.start_ui()
     else:
         from client import Client
         client = Client()
