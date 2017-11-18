@@ -19,9 +19,10 @@ class Steerage:
 
         # Control Manipulator via keyboard
         self.keyboard.events.get_some_debug_data += self.rbc_test
-        self.keyboard.events.motor1_inc_pos += self.motor1_inc_pos
-        self.keyboard.events.manipulator_halt += self.manipulator_halt
+        self.keyboard.events.manipulator_halt += self.manipulator.halt
         self.keyboard.events.manipulator_status_update += self.manipulator_status_update
+        self.keyboard.events.manipulator_forward += self.manipulator.forward
+        self.keyboard.events.manipulator_backward += self.manipulator.backward
 
         self.motor_power = 20
 
@@ -47,11 +48,6 @@ class Steerage:
     def rbc_test(self):
         self.manipulator.get_status()
 
-    def motor1_inc_pos(self):
-        self.manipulator.motor1_inc_pos()
-
-    def manipulator_halt(self):
-        self.manipulator.halt()
 
     def manipulator_status_update(self):
         self.manipulator.get_status()

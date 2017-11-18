@@ -3,13 +3,20 @@ import threading
 from events import Events
 import binascii
 import server.hascii as h
+from motors import Motors
 
+
+# ON RbC-4242
+# 0x22: [MOT10 -> PIN10 MOT1 -> PIN1] [MOT3 -> PIN10 MOT2 -> PIN1]
+# 0x21: [MOT1 -> PIN1 MOT2 -> PIN10] [MOT3 -> PIN1 MOT2 -> PIN10]
 
 class Manipulator:
     def __init__(self, uart):
         self.events = Events()
         self.uart = uart
         self.prev_data = None
+
+        self.motors = Motors()
 
     def get_status(self):
         packet = bytearray()
@@ -48,33 +55,33 @@ class Manipulator:
             "position4": h.decode(response[81:89]),
         }
 
-    def motor1_inc_pos(self):
+    def forward(self, motor_id, value=2800):
         packet = bytearray()
         packet.append(0xFF)
         packet.append(0x21)
         packet.append(0x21)
 
-        # 0 -> 0x30 -> 0%
-
-        # ON RbC-4242
-        # 0x22: [MOT10 -> PIN10 MOT1 -> PIN1] [MOT3 -> PIN10 MOT2 -> PIN1]
-        # 0x21: [MOT1 -> PIN1 MOT2 -> PIN10] [MOT3 -> PIN1 MOT2 -> PIN10]
-
-        packet.extend(h.encode8(0))
-        packet.extend(h.encode8(-1400))  # MOT1
-        # packet.append(0x46)
-        # packet.append(0x46)
-        # packet.append(0x46)
-        # packet.append(0x46)
-        # packet.append(0x46)
-        # packet.append(0x46)
-        # packet.append(0x34)
-        # packet.append(0x34)
-        packet.extend(h.encode8(0))
-        packet.extend(h.encode8(0))
+        packet.extend(self.motors.motor(motor_id, value))
 
         packet.append(0x0A)
 
+        self.send(packet)
+
+    def backward(self, motor_id, value=-2800):
+        packet = bytearray()
+        packet.append(0xFF)
+        packet.append(0x21)
+        packet.append(0x21)
+
+        packet.extend(self.motors.motor(motor_id, value))
+
+        packet.append(0x0A)
+
+        self.send(packet)
+
+
+    def send(self, packet):
+        # send only if data chenged
         if self.prev_data != packet:
             self.uart.write(packet)
             self.prev_data = packet
@@ -85,7 +92,7 @@ class Manipulator:
         packet.append(0xFF)
         packet.append(0x21)
         packet.append(0x21)
-        # 4095 -> 0xFF 0xFF 0xFF -> 100%
+        # 4095 -> 0xFF 0xFF 0xFF -> 0%
         packet.extend(h.encode8(4095))
         packet.extend(h.encode8(4095))
         packet.extend(h.encode8(4095))

@@ -1,7 +1,7 @@
 import binascii
 from log import logger
 
-# This are maximum values for 3 & 8 character HAscii ranges
+# This are maximum values for 3, 4 and 8 character HAscii ranges
 MAX3 = 4095  # => 0xFFF
 MAX4 = 65535  # => 0xFFFF
 MAX8 = 4294967295  # => 0xFFFFFFFF
