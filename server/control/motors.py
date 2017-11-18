@@ -2,8 +2,9 @@ from server import hascii as h
 
 
 class Motors:
-    def __init__(self):
-        self._motors = [0, 0, 0, 0]
+    def __init__(self, number_of_motors):
+        # This sets number of motors
+        self._motors = [0] * number_of_motors
 
     # It is more natural when 0 means no moving
     # So this f. inverts 0 -> 4095 and vice versa
@@ -21,26 +22,10 @@ class Motors:
             packet.extend(h.encode8(self._invert(motor)))
         return packet
 
-    def _set_m1(self, value):
-        return self.set([value, 0, 0, 0])
-
-    def _set_m2(self, value):
-        return self.set([0, value, 0, 0])
-
-    def _set_m3(self, value):
-        return self.set([0, 0, value, 0])
-
-    def _set_m4(self, value):
-        return self.set([0, 0, 0, value])
-
     def motor(self, motor_id, value):
-        if motor_id == 1:
-            return self._set_m1(value)
-        elif motor_id == 2:
-            return self._set_m2(value)
-        elif motor_id == 3:
-            return self._set_m3(value)
-        elif motor_id == 4:
-            return self._set_m4(value)
-        else:
-            return self.set([0, 0, 0, 0])
+        for index, prev_value in enumerate(self._motors):
+            if index == motor_id - 1:
+                self._motors[index] = value
+            else:
+                self._motors[index] = 0
+        return self.set(self._motors)

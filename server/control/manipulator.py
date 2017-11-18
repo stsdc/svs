@@ -16,7 +16,7 @@ class Manipulator:
         self.uart = uart
         self.prev_data = None
 
-        self.motors = Motors()
+        self.motors = Motors(4)
 
     def get_status(self):
         packet = bytearray()
