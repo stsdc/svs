@@ -35,9 +35,11 @@ class Core(Thread):
         self.sockserver.start()
         self.uart.start()
 
+        self.connect_events()
+
+    def connect_events(self):
         self.uart.events.on_connected += self.start_control
         self.sockserver.events.on_connected += self.referencing_clients_to_core
-        # self.manipulator.events.on_data += self.update_manipulator_ui
 
     def start_control(self):
         # Only when serial is connected
@@ -45,6 +47,7 @@ class Core(Thread):
             self.manipulator = Manipulator(self.uart)
             self.mobile_platform = MobilePlatform(self.uart)
             Steerage(self.manipulator, self.mobile_platform)
+            self.manipulator.events.on_data += self.update_manipulator_ui
 
     def distance(self, data):
         pass
@@ -75,3 +78,6 @@ class Core(Thread):
     def update_unit0(self, data):
         # self.distance()
         self.events.update_unit0_ui(data["markers"])
+
+    def update_manipulator_ui(self, data):
+        self.events.update_manipulator_ui(data)

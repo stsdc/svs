@@ -21,22 +21,22 @@ class Manipulator:
     def get_status(self):
         packet = bytearray()
         packet.append(0xFF)
-        packet.append(0x22)
-        packet.append(0x2A)
+        packet.append(0x21)
+        packet.append(0x6F)
         packet.append(0x0A)
 
         self.uart.write(packet)
         del packet
 
         response = self.uart.readline()
-
+        # self.parse(response)
         self.events.on_data(self.parse(response))
 
     def parse(self, response):
         # the first three characters are junk
         response = response[2:]
 
-        # logger.debug("Manipulator: Recieved: %s", response)
+        logger.debug("Manipulator: Recieved: %s", response)
         return {
             "current1": h.decode(response[13:16]),  # 13, 14, 15
             "velocity1": h.decode(response[16:24]),
@@ -55,7 +55,7 @@ class Manipulator:
             "position4": h.decode(response[81:89]),
         }
 
-    def forward(self, motor_id, value=2800):
+    def forward(self, motor_id, value=4000):
         packet = bytearray()
         packet.append(0xFF)
         packet.append(0x21)
@@ -67,7 +67,7 @@ class Manipulator:
 
         self.send(packet)
 
-    def backward(self, motor_id, value=-2800):
+    def backward(self, motor_id, value=-4000):
         packet = bytearray()
         packet.append(0xFF)
         packet.append(0x21)

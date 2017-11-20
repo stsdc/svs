@@ -30,17 +30,20 @@ class UI():
 
         self.core = Core()
 
-        self.core.sockserver.events.on_connected += self.update_server_status
-        self.core.events.update_unit0_ui += self.update_client0
-        # self.core.manipulator.events.on_data += self.update_manipulator
-
     def start_ui(self):
         # self.init_screen(stdscr)
         self.core.start()
 
+        self.connect_events()
+
         self.logbox.box.getch()  # get the key
 
         self.stop()
+
+    def connect_events(self):
+        self.core.sockserver.events.on_connected += self.update_server_status
+        self.core.events.update_unit0_ui += self.update_client0
+        self.core.events.update_manipulator_ui += self.update_manipulator
 
     def show_data(self, data):
         logger.debug("%s", data)
