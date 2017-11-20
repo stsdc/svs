@@ -15,10 +15,13 @@ class Manipulator:
         self.events = Events()
         self.uart = uart
         self.prev_data = None
+        self._thread = None
 
         self.motors = Motors(4)
 
     def get_status(self):
+        self._thread = threading.Timer(2, self.get_status)
+        self._thread.start()
         packet = bytearray()
         packet.append(0xFF)
         packet.append(0x21)
