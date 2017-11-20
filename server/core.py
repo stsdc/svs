@@ -60,6 +60,7 @@ class Core(Thread):
         pass
 
     def __stop(self):
+        self.manipulator.stop()
         self.uart.stop()
         self.sockserver.stop()
 

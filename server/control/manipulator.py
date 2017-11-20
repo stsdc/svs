@@ -4,7 +4,7 @@ from events import Events
 import binascii
 import server.hascii as h
 from motors import Motors
-
+from rbc4242 import RbC4242
 
 # ON RbC-4242
 # 0x22: [MOT10 -> PIN10 MOT1 -> PIN1] [MOT3 -> PIN10 MOT2 -> PIN1]
@@ -16,21 +16,16 @@ class Manipulator:
         self.uart = uart
         self.prev_data = None
         self._thread = None
-
+        self.module_21 = RbC4242(0x21)
+        self.module_22 = RbC4242(0x22)
         self.motors = Motors(4)
 
     def get_status(self):
         self._thread = threading.Timer(2, self.get_status)
         self._thread.start()
-        packet = bytearray()
-        packet.append(0xFF)
-        packet.append(0x21)
-        packet.append(0x6F)
-        packet.append(0x0A)
 
+        packet = self.module_21.get_motors_status()
         self.uart.write(packet)
-        del packet
-
         response = self.uart.readline()
         # self.parse(response)
         self.events.on_data(self.parse(response))
@@ -95,12 +90,11 @@ class Manipulator:
         packet.append(0xFF)
         packet.append(0x21)
         packet.append(0x21)
-        # 4095 -> 0xFF 0xFF 0xFF -> 0%
-        packet.extend(h.encode8(4095))
-        packet.extend(h.encode8(4095))
-        packet.extend(h.encode8(4095))
-        packet.extend(h.encode8(4095))
+        packet.extend(self.motors.all(0))
         packet.append(0x0A)
 
         self.uart.write(packet)
         self.prev_data = packet
+
+    def stop(self):
+        self._thread.join()

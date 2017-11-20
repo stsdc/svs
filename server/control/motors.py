@@ -16,7 +16,9 @@ class Motors:
         elif -4095 <= value <= 0:
             return -(4095 - abs(value))
 
-    def set(self, motors):
+    # First, It inverts motor PWM value (0 is 4095),
+    # then converts to hascii
+    def convert(self, motors):
         packet = bytearray()
         for motor in motors:
             packet.extend(h.encode8(self._invert(motor)))
@@ -28,4 +30,11 @@ class Motors:
                 self._motors[index] = value
             else:
                 self._motors[index] = 0
-        return self.set(self._motors)
+        return self.convert(self._motors)
+
+    def all(self, value):
+        for index in range(len(self._motors)):
+            self._motors[index] = value
+        return self.convert(self._motors)
+
+
