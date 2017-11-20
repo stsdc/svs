@@ -10,8 +10,11 @@ class RbC4242:
         packet.append(0x0A)
         return packet
 
-    def set_motors_pwm(self, ):
+    def set_motors_pwm(self, values):
         packet = bytearray()
         packet.append(0xFF)
         packet.append(self._address)
         packet.append(0x21)
+        packet.extend(values)
+        packet.append(0x0A)
+        return packet

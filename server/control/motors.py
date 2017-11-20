@@ -1,6 +1,7 @@
 from server import hascii as h
 
 
+# This class builds motors bytearray for 0x21 command
 class Motors:
     def __init__(self, number_of_motors):
         # This sets number of motors
@@ -36,5 +37,3 @@ class Motors:
         for index in range(len(self._motors)):
             self._motors[index] = value
         return self.convert(self._motors)
-
-

@@ -54,27 +54,13 @@ class Manipulator:
         }
 
     def forward(self, motor_id, value=4000):
-        packet = bytearray()
-        packet.append(0xFF)
-        packet.append(0x21)
-        packet.append(0x21)
-
-        packet.extend(self.motors.motor(motor_id, value))
-
-        packet.append(0x0A)
-
+        motors_pwm_values = self.motors.motor(motor_id, value)
+        packet = self.module_21.set_motors_pwm(motors_pwm_values)
         self.send(packet)
 
     def backward(self, motor_id, value=-4000):
-        packet = bytearray()
-        packet.append(0xFF)
-        packet.append(0x21)
-        packet.append(0x21)
-
-        packet.extend(self.motors.motor(motor_id, value))
-
-        packet.append(0x0A)
-
+        motors_pwm_values = self.motors.motor(motor_id, value)
+        packet = self.module_21.set_motors_pwm(motors_pwm_values)
         self.send(packet)
 
 
