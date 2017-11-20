@@ -28,7 +28,7 @@ def decode(data):
     try:
         return int(hexed, 16)
     except ValueError as e:
-        logger.error("HAscii: Decode: %s", e)
+        logger.error("HAscii: Trying to decode: [%s], %s", data, e)
 
 # encoded8 = encode8(100)
 # encoded3 = encode3(1234)
