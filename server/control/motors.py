@@ -18,7 +18,7 @@ class Motors:
             return -(4095 - abs(value))
 
     # First, It inverts motor PWM value (0 is 4095),
-    # then converts to hascii
+    # then converts to hascii and returns 8hascii*motors
     def convert(self, motors):
         packet = bytearray()
         for motor in motors:

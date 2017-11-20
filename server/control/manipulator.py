@@ -72,15 +72,9 @@ class Manipulator:
             logger.debug(binascii.hexlify(packet))
 
     def halt(self):
-        packet = bytearray()
-        packet.append(0xFF)
-        packet.append(0x21)
-        packet.append(0x21)
-        packet.extend(self.motors.all(0))
-        packet.append(0x0A)
-
-        self.uart.write(packet)
-        self.prev_data = packet
+        motors_pwm_values = self.motors.all(0)
+        packet = self.module_21.set_motors_pwm(motors_pwm_values)
+        self.send(packet)
 
     def stop(self):
         self._thread.join()
