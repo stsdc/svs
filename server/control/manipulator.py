@@ -3,7 +3,6 @@ import threading
 from events import Events
 import binascii
 import server.hascii as h
-from motors import Motors
 from rbc4242 import RbC4242
 
 # ON RbC-4242
@@ -15,14 +14,13 @@ class Manipulator:
         self.events = Events()
         self.uart = uart
         self.prev_data = None
-        self._thread = None
-        self.module_21 = RbC4242(0x21)
-        self.module_22 = RbC4242(0x22)
-        self.motors = Motors(4)
+        self._thread_get_motors_status = None
+        self.module_21 = RbC4242(0x21, 4)
+        self.module_22 = RbC4242(0x22, 4)
 
     def get_status(self):
-        self._thread = threading.Timer(2, self.get_status)
-        self._thread.start()
+        self._thread_get_motors_status = threading.Timer(2, self.get_status)
+        self._thread_get_motors_status.start()
 
         packet = self.module_21.get_motors_status()
         self.uart.write(packet)
@@ -54,27 +52,27 @@ class Manipulator:
         }
 
     def forward(self, motor_id, value=4000):
-        motors_pwm_values = self.motors.motor(motor_id, value)
-        packet = self.module_21.set_motors_pwm(motors_pwm_values)
+        packet = self.module_21.set_single_motor_pwm(motor_id, value)
         self.send(packet)
 
     def backward(self, motor_id, value=-4000):
-        motors_pwm_values = self.motors.motor(motor_id, value)
-        packet = self.module_21.set_motors_pwm(motors_pwm_values)
+        packet = self.module_21.set_single_motor_pwm(motor_id, value)
         self.send(packet)
 
-
     def send(self, packet):
-        # send only if data chenged
+        # Send only if data changed
+        # Canceling thread to prevent multiple errors
         if self.prev_data != packet:
+            self._thread_get_motors_status.cancel()
             self.uart.write(packet)
             self.prev_data = packet
             logger.debug(binascii.hexlify(packet))
+            self.get_status()
+
 
     def halt(self):
-        motors_pwm_values = self.motors.all(0)
-        packet = self.module_21.set_motors_pwm(motors_pwm_values)
+        packet = self.module_21.set_all_motors_pwm(0)
         self.send(packet)
 
     def stop(self):
-        self._thread.join()
+        self._thread_get_motors_status.join()
