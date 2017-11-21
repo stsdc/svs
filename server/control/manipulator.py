@@ -52,8 +52,7 @@ class Manipulator:
             self.prev_data = packet
             logger.debug(binascii.hexlify(packet))
 
-            if not self._thread_get_motors_status:
-                self.get_status()
+            self.get_status()
 
     def halt(self):
         packet = self.module_21.set_all_motors_pwm(0)
