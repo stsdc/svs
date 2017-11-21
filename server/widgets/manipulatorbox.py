@@ -15,12 +15,15 @@ class ManipulatorBox(Box):
         self.add(0, 49, "%9s" % "MOTOR 3", self.bold)
         self.add(0, 67, "%9s" % "MOTOR 4", self.bold)
 
+        self.add(0, 0, "0x21", self.bold)
         self.add(1, 0, "CURRENT:", self.bold)
-
         self.add(2, 0, "VELOCITY:", self.bold)
-
         self.add(3, 0, "POSITION:", self.bold)
 
+        self.add(5, 0, "0x22", self.bold)
+        self.add(6, 0, "CURRENT:", self.bold)
+        self.add(7, 0, "VELOCITY:", self.bold)
+        self.add(8, 0, "POSITION:", self.bold)
 
         # self.add(4, 0, "ADC4:")
         #
@@ -50,6 +53,22 @@ class ManipulatorBox(Box):
             self.add(1, 66, "%10s" % data["current4"], self.default_colors)
             self.add(2, 66, "%10s" % data["velocity4"], self.default_colors)
             self.add(3, 66, "%10s" % data["position4"], self.default_colors)
+
+            self.add(6, 11, "%13s" % data["current1"], self.default_colors)
+            self.add(7, 11, "%13s" % data["velocity1"], self.default_colors)
+            self.add(8, 11, "%13s" % data["position1"], self.default_colors)
+
+            self.add(6, 28, "%10s" % data["current2"], self.default_colors)
+            self.add(7, 28, "%10s" % data["velocity2"], self.default_colors)
+            self.add(8, 28, "%10s" % data["position2"], self.default_colors)
+
+            self.add(6, 48, "%10s" % data["current3"], self.default_colors)
+            self.add(7, 48, "%10s" % data["velocity3"], self.default_colors)
+            self.add(8, 48, "%10s" % data["position3"], self.default_colors)
+
+            self.add(6, 66, "%10s" % data["current4"], self.default_colors)
+            self.add(7, 66, "%10s" % data["velocity4"], self.default_colors)
+            self.add(8, 66, "%10s" % data["position4"], self.default_colors)
         else:
             self.add(1, 11, "%13s" % "N/A", self.default_colors)
 

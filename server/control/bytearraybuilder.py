@@ -9,6 +9,7 @@ class BytearrayBuilder:
 
     # It is more natural when 0 means no moving
     # So this f. inverts 0 -> 4095 and vice versa
+    # Inverts for 3 characters !!!
 
     @staticmethod
     def _invert(value):
