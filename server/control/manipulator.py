@@ -49,11 +49,18 @@ class Manipulator:
         self.events.on_data([parsed_21, parsed_22])
 
     def forward(self, motor_id, value=4000):
-        packet = self.module_21.set_single_motor_pwm(motor_id, value)
+        if motor_id < 5:
+            packet = self.module_21.set_single_motor_pwm(motor_id, value)
+        else:
+            packet = self.module_22.set_single_motor_pwm(motor_id - 4, value)
         self.send(packet)
 
     def backward(self, motor_id, value=-4000):
-        packet = self.module_21.set_single_motor_pwm(motor_id, value)
+        if motor_id < 5:
+            packet = self.module_21.set_single_motor_pwm(motor_id, value)
+        else:
+            packet = self.module_22.set_single_motor_pwm(motor_id - 4, value)
+            self.send(packet)
         self.send(packet)
 
     def send(self, packet):

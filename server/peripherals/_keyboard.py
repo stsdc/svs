@@ -27,6 +27,8 @@ class Keyboard:
         keyboard.add_hotkey('down+3', self.manipulator_motor_3_backward)
         keyboard.add_hotkey('up+4', self.manipulator_motor_4_forward)
         keyboard.add_hotkey('down+4', self.manipulator_motor_4_backward)
+        keyboard.add_hotkey('up+5', self.manipulator_motor_5_forward)
+        keyboard.add_hotkey('down+5', self.manipulator_motor_5_backward)
 
         keyboard.add_hotkey('u', self.manipulator_status_update)
 
@@ -82,6 +84,12 @@ class Keyboard:
 
     def manipulator_motor_4_backward(self):
         self.events.manipulator_backward(4)
+
+    def manipulator_motor_5_forward(self):
+        self.events.manipulator_forward(5)
+
+    def manipulator_motor_5_backward(self):
+        self.events.manipulator_backward(5)
 
     def manipulator_status_update(self):
         self.events.manipulator_status_update()
