@@ -15,6 +15,7 @@ class Manipulator:
         self.uart = uart
         self.prev_data = None
         self._thread_get_motors_status = None
+
         self.module_21 = RbC4242(0x21, 4)
         self.module_22 = RbC4242(0x22, 4)
 
@@ -22,6 +23,7 @@ class Manipulator:
 
     def get_status(self):
         self._thread_get_motors_status = threading.Timer(1, self.get_status)
+        self._thread_get_motors_status.daemon = True
         self._thread_get_motors_status.start()
 
         packet_21 = self.module_21.get_motors_status()
@@ -58,15 +60,15 @@ class Manipulator:
         # Send only if data changed
         # Canceling thread to prevent multiple errors
         if self.prev_data != packet:
-            if self._thread_get_motors_status:
-                self._thread_get_motors_status.cancel()
-                del self._thread_get_motors_status
+            # if self._thread_get_motors_status:
+            #     self._thread_get_motors_status.cancel()
+            #     del self._thread_get_motors_status
 
             self.uart.write(packet)
             self.prev_data = packet
             logger.debug(binascii.hexlify(packet))
 
-            self.get_status()
+            # self.get_status()
 
     def halt(self):
         packet = self.module_21.set_all_motors_pwm(0)

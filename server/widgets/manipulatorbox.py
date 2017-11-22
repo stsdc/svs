@@ -37,7 +37,7 @@ class ManipulatorBox(Box):
         # self.add(6, 11, "%12s" % "N/A")
 
     def update(self, data):
-        if data[0] is not None:
+        if data[0]:
             self.add(1, 11, "%13s" % data[0]["current1"], self.default_colors)
             self.add(2, 11, "%13s" % data[0]["velocity1"], self.default_colors)
             self.add(3, 11, "%13s" % data[0]["position1"], self.default_colors)
@@ -54,7 +54,7 @@ class ManipulatorBox(Box):
             self.add(2, 66, "%10s" % data[0]["velocity4"], self.default_colors)
             self.add(3, 66, "%10s" % data[0]["position4"], self.default_colors)
 
-        if data[1] is not None:
+        if data[1]:
             self.add(6, 11, "%13s" % data[1]["current1"], self.default_colors)
             self.add(7, 11, "%13s" % data[1]["velocity1"], self.default_colors)
             self.add(8, 11, "%13s" % data[1]["position1"], self.default_colors)
