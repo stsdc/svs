@@ -63,6 +63,7 @@ class Core(Thread):
         self.manipulator.stop()
         self.uart.stop()
         self.sockserver.stop()
+        self.join()
 
     # this looks really lame
     def referencing_clients_to_core(self, is_connected):

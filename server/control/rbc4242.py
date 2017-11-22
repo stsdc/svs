@@ -33,27 +33,33 @@ class RbC4242:
         return self.set_pwm(self.motors.all(value))
 
     def parse_status(self, response):
-        if len(binascii.hexlify(response)) == 184:
-            logger.debug("RbC: Recieved: %s", binascii.hexlify(response))
-            response = response[2:]
+        try:
+            logger.debug("RbC %s: Recieved: %s", hex(self._address), binascii.hexlify(response))
+            if binascii.hexlify(response[0:3]) == self.prefix(9):
+                response = response[2:]
+                return {
+                    "current1": h.decode(response[13:16]),  # 13, 14, 15
+                    "velocity1": h.decode(response[16:24]),
+                    "position1": h.decode(response[24:32]),
 
-            return {
-                "current1": h.decode(response[13:16]),  # 13, 14, 15
-                "velocity1": h.decode(response[16:24]),
-                "position1": h.decode(response[24:32]),
+                    "current2": h.decode(response[32:35]),
+                    "velocity2": h.decode(response[35:43]),
+                    "position2": h.decode(response[43:51]),
 
-                "current2": h.decode(response[32:35]),
-                "velocity2": h.decode(response[35:43]),
-                "position2": h.decode(response[43:51]),
+                    "current3": h.decode(response[51:54]),
+                    "velocity3": h.decode(response[54:62]),
+                    "position3": h.decode(response[62:70]),
 
-                "current3": h.decode(response[51:54]),
-                "velocity3": h.decode(response[54:62]),
-                "position3": h.decode(response[62:70]),
+                    "current4": h.decode(response[70:73]),
+                    "velocity4": h.decode(response[73:81]),
+                    "position4": h.decode(response[81:89]),
+                }
+            else:
+                return False
+        except IndexError as e:
+            logger.error("RbC %s: %s", hex(self._address), e)
 
-                "current4": h.decode(response[70:73]),
-                "velocity4": h.decode(response[73:81]),
-                "position4": h.decode(response[81:89]),
-            }
-        else:
-            logger.error("RbC: Recieved wrong response from %s", hex(self._address))
+    def prefix(self, command):
+        return "ff" + format(self._address, "x") + format(0x6F, "x")
+
 

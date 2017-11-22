@@ -3,7 +3,7 @@ import threading
 from events import Events
 import binascii
 from rbc4242 import RbC4242
-
+from time import sleep
 
 # ON RbC-4242
 # 0x22: [MOT10 -> PIN10 MOT1 -> PIN1] [MOT3 -> PIN10 MOT2 -> PIN1]
@@ -21,17 +21,30 @@ class Manipulator:
         self.get_status()
 
     def get_status(self):
-        self._thread_get_motors_status = threading.Timer(2, self.get_status)
+        self._thread_get_motors_status = threading.Timer(1, self.get_status)
         self._thread_get_motors_status.start()
 
         packet_21 = self.module_21.get_motors_status()
         packet_22 = self.module_22.get_motors_status()
 
         self.uart.write(packet_21)
-        response_from_21 = self.uart.readline()
-        parsed = self.module_21.parse_status(response_from_21)
+        sleep(0.5)
 
-        self.events.on_data(parsed)
+        self.uart.write(packet_22)
+
+        res_21 = self.uart.readline()
+        sleep(0.5)
+        res_22 = self.uart.readline()
+
+        # this is bad
+        parsed_21 = self.module_21.parse_status(res_21)
+        if parsed_21:
+            parsed_22 = self.module_22.parse_status(res_22)
+        else:
+            parsed_21 = self.module_21.parse_status(res_22)
+            parsed_22 = self.module_22.parse_status(res_21)
+
+        self.events.on_data([parsed_21, parsed_22])
 
     def forward(self, motor_id, value=4000):
         packet = self.module_21.set_single_motor_pwm(motor_id, value)
@@ -47,6 +60,7 @@ class Manipulator:
         if self.prev_data != packet:
             if self._thread_get_motors_status:
                 self._thread_get_motors_status.cancel()
+                del self._thread_get_motors_status
 
             self.uart.write(packet)
             self.prev_data = packet
@@ -59,4 +73,5 @@ class Manipulator:
         self.send(packet)
 
     def stop(self):
+        self.halt()
         self._thread_get_motors_status.join()

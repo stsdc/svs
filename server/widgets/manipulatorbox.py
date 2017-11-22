@@ -37,38 +37,39 @@ class ManipulatorBox(Box):
         # self.add(6, 11, "%12s" % "N/A")
 
     def update(self, data):
-        if data is not None:
-            self.add(1, 11, "%13s" % data["current1"], self.default_colors)
-            self.add(2, 11, "%13s" % data["velocity1"], self.default_colors)
-            self.add(3, 11, "%13s" % data["position1"], self.default_colors)
+        if data[0] is not None:
+            self.add(1, 11, "%13s" % data[0]["current1"], self.default_colors)
+            self.add(2, 11, "%13s" % data[0]["velocity1"], self.default_colors)
+            self.add(3, 11, "%13s" % data[0]["position1"], self.default_colors)
 
-            self.add(1, 28, "%10s" % data["current2"], self.default_colors)
-            self.add(2, 28, "%10s" % data["velocity2"], self.default_colors)
-            self.add(3, 28, "%10s" % data["position2"], self.default_colors)
+            self.add(1, 28, "%10s" % data[0]["current2"], self.default_colors)
+            self.add(2, 28, "%10s" % data[0]["velocity2"], self.default_colors)
+            self.add(3, 28, "%10s" % data[0]["position2"], self.default_colors)
 
-            self.add(1, 48, "%10s" % data["current3"], self.default_colors)
-            self.add(2, 48, "%10s" % data["velocity3"], self.default_colors)
-            self.add(3, 48, "%10s" % data["position3"], self.default_colors)
+            self.add(1, 48, "%10s" % data[0]["current3"], self.default_colors)
+            self.add(2, 48, "%10s" % data[0]["velocity3"], self.default_colors)
+            self.add(3, 48, "%10s" % data[0]["position3"], self.default_colors)
 
-            self.add(1, 66, "%10s" % data["current4"], self.default_colors)
-            self.add(2, 66, "%10s" % data["velocity4"], self.default_colors)
-            self.add(3, 66, "%10s" % data["position4"], self.default_colors)
+            self.add(1, 66, "%10s" % data[0]["current4"], self.default_colors)
+            self.add(2, 66, "%10s" % data[0]["velocity4"], self.default_colors)
+            self.add(3, 66, "%10s" % data[0]["position4"], self.default_colors)
 
-            self.add(6, 11, "%13s" % data["current1"], self.default_colors)
-            self.add(7, 11, "%13s" % data["velocity1"], self.default_colors)
-            self.add(8, 11, "%13s" % data["position1"], self.default_colors)
+        if data[1] is not None:
+            self.add(6, 11, "%13s" % data[1]["current1"], self.default_colors)
+            self.add(7, 11, "%13s" % data[1]["velocity1"], self.default_colors)
+            self.add(8, 11, "%13s" % data[1]["position1"], self.default_colors)
 
-            self.add(6, 28, "%10s" % data["current2"], self.default_colors)
-            self.add(7, 28, "%10s" % data["velocity2"], self.default_colors)
-            self.add(8, 28, "%10s" % data["position2"], self.default_colors)
+            self.add(6, 28, "%10s" % data[1]["current2"], self.default_colors)
+            self.add(7, 28, "%10s" % data[1]["velocity2"], self.default_colors)
+            self.add(8, 28, "%10s" % data[1]["position2"], self.default_colors)
 
-            self.add(6, 48, "%10s" % data["current3"], self.default_colors)
-            self.add(7, 48, "%10s" % data["velocity3"], self.default_colors)
-            self.add(8, 48, "%10s" % data["position3"], self.default_colors)
+            self.add(6, 48, "%10s" % data[1]["current3"], self.default_colors)
+            self.add(7, 48, "%10s" % data[1]["velocity3"], self.default_colors)
+            self.add(8, 48, "%10s" % data[1]["position3"], self.default_colors)
 
-            self.add(6, 66, "%10s" % data["current4"], self.default_colors)
-            self.add(7, 66, "%10s" % data["velocity4"], self.default_colors)
-            self.add(8, 66, "%10s" % data["position4"], self.default_colors)
+            self.add(6, 66, "%10s" % data[1]["current4"], self.default_colors)
+            self.add(7, 66, "%10s" % data[1]["velocity4"], self.default_colors)
+            self.add(8, 66, "%10s" % data[1]["position4"], self.default_colors)
         else:
             self.add(1, 11, "%13s" % "N/A", self.default_colors)
 
