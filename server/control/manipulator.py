@@ -79,6 +79,7 @@ class Manipulator:
 
     def halt(self):
         packet = self.module_21.set_all_motors_pwm(0)
+        packet = self.module_22.set_all_motors_pwm(0)
         self.send(packet)
 
     def stop(self):
