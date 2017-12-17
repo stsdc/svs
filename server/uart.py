@@ -33,7 +33,7 @@ class Uart(Thread):
         while self.serial is None:
             logger.info("UART: Waiting for serial device")
             for port in self.available_ports():
-                if "AMA0" in port.name:
+                if "USB" in port.name:
                     logger.info("UART: Found device: %s %s", port.name, port.manufacturer)
                     self.connect(port.device)
             sleep(2)

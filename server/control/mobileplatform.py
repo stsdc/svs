@@ -1,6 +1,7 @@
 from server.uart import Uart
 from log import logger
 
+
 class MobilePlatform:
     def __init__(self, uart):
         self.uart = uart
@@ -32,4 +33,5 @@ class MobilePlatform:
             return "00" + power
         if len(power) == 2:
             return "0" + power
-
+        if len(power) == 3:
+            return power

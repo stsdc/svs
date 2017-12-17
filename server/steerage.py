@@ -24,22 +24,23 @@ class Steerage:
         self.keyboard.events.manipulator_forward += self.manipulator.forward
         self.keyboard.events.manipulator_backward += self.manipulator.backward
 
-        self.motor_power = 20
+        # CAUTION: Inverted values. MIN is MAX
+        self.motor_power = 170
 
     def move(self, motor_l, motor_r):
         self.mobile_platform.send(motor_l * self.motor_power, motor_r * self.motor_power)
 
     def forward(self):
-        self.mobile_platform.send(1 * self.motor_power, 1 * self.motor_power)
+        self.mobile_platform.send(220, 220)
 
     def backward(self):
-        self.mobile_platform.send(-1 * self.motor_power, -1 * self.motor_power)
+        self.mobile_platform.send(-220, -220)
 
     def left(self):
-        self.mobile_platform.send(int(0.2 * self.motor_power), 1 * self.motor_power)
+        self.mobile_platform.send(int(-1 * self.motor_power), 1 * self.motor_power)
 
     def right(self):
-        self.mobile_platform.send(1 * self.motor_power, int(0.2 * self.motor_power))
+        self.mobile_platform.send(1 * self.motor_power, int(-1 * self.motor_power))
 
     def mobile_platform_halt(self):
         # Stop gracefully

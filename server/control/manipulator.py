@@ -19,7 +19,7 @@ class Manipulator:
         self.module_21 = RbC4242(0x21, 4)
         self.module_22 = RbC4242(0x22, 4)
 
-        self.get_status()
+        # self.get_status()
 
     def get_status(self):
         self._thread_get_motors_status = threading.Timer(1, self.get_status)
@@ -78,9 +78,12 @@ class Manipulator:
             # self.get_status()
 
     def halt(self):
-        packet = self.module_21.set_all_motors_pwm(0)
-        packet = self.module_22.set_all_motors_pwm(0)
-        self.send(packet)
+        packet_21 = self.module_21.set_all_motors_pwm(0)
+        self.send(packet_21)
+
+        packet_22 = self.module_22.set_all_motors_pwm(0)
+        self.send(packet_22)
+
 
     def stop(self):
         self.halt()
