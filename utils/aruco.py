@@ -6,8 +6,10 @@ import cv2.aruco as aruco
 cap = cv2.VideoCapture(0)
 # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640);
 # cap.set(cv2.CAP_PROP_FRAME_HEIGHT,480);
+camera_matrix = np.array([[1776,0,762],[0,1780,1025],[0,0,1]],dtype=float)
+dist_coeffs = np.array([[0,0,0,0]],dtype=float)
 
-while(True):
+while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
     #print(frame.shape) #480x640
@@ -32,9 +34,14 @@ while(True):
 
     gray = aruco.drawDetectedMarkers(gray, corners, ids)
 
+    rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30,
+                                                              camera_matrix, dist_coeffs)
+    for i in range(len(rvecs)):
+        frame = aruco.drawAxis(grsy, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
+
     #print(rejectedImgPoints)
     # Display the resulting frame
-    cv2.imshow('frame',gray)
+    cv2.imshow('Marker detection', gray)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
