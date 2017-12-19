@@ -37,7 +37,7 @@ while True:
 
     rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30, camera_matrix, dist_coeffs)
 
-    if rvecs:
+    if rvecs is not None:
         for i in range(len(rvecs)):
             gray = aruco.drawAxis(colored, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
 
