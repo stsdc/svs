@@ -37,7 +37,7 @@ while True:
     rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30,
                                                               camera_matrix, dist_coeffs)
     for i in range(len(rvecs)):
-        frame = aruco.drawAxis(grsy, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
+        frame = aruco.drawAxis(gray, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
 
     #print(rejectedImgPoints)
     # Display the resulting frame
