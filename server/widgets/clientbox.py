@@ -44,15 +44,12 @@ class ClientBox(Box):
 
     def update_data(self, data):
         # should make for loop or assign markers to variables
-        if len(data) == 1:
-            self.add(1, 7, "MARKER %d" % data[0]["id"], self.bold)
-            self.xyz_data_template(self.rot_pos_y_A, self.rot_pos_x_A, data[0]["rot"])
-            self.xyz_data_template(self.tran_pos_y_A, self.tran_pos_x_A, data[0]["tran"])
-
-            # if len(data) == 2:
-            #     self.add(1, 7, "MARKER %d" % data[1]["id"], self.bold)
-            #     self.xyz_data_template(self.rot_pos_y_A, self.rot_pos_x_A, data[0]["rot"])
-            #     self.xyz_data_template(self.tran_pos_y_A, self.tran_pos_x_A, data[0]["tran"])
+        if len(data) != 0:
+            for marker in data:
+                if marker["id"] == 9:
+                    self.show_marker_A_data(marker)
+                elif marker["id"] == 16:
+                    self.show_marker_B_data(marker)
 
     def xyz_data_template(self, pos_y, pos_x, data):
         self.add(pos_y + 1, 1, "X:")
@@ -67,3 +64,13 @@ class ClientBox(Box):
             self.add(pos_y + 1, pos_x, "%19s" % "N/A")
             self.add(pos_y + 2, pos_x, "%19s" % "N/A")
             self.add(pos_y + 3, pos_x, "%19s" % "N/A")
+
+    def show_marker_A_data(self, marker):
+        self.add(1, 7, "MARKER %d" % marker["id"], self.bold)
+        self.xyz_data_template(self.rot_pos_y_A, self.rot_pos_x_A, marker["rot"])
+        self.xyz_data_template(self.tran_pos_y_A, self.tran_pos_x_A, marker["tran"])
+
+    def show_marker_B_data(self, marker):
+        self.add(1, 31, "MARKER %d" % marker["id"], self.bold)
+        self.xyz_data_template(self.rot_pos_y_B, self.rot_pos_x_B, marker["rot"])
+        self.xyz_data_template(self.tran_pos_y_B, self.tran_pos_x_B, marker["tran"])

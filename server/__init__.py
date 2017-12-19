@@ -23,8 +23,8 @@ class UI():
         # UI elements
         self.headerbox = HeaderBox(1, self.maxx, 0, 0)
         self.serverbox = ServerBox(13, 25, 2, 2)
-        self.clientbox0 = ClientBox(13, 50, 2, 30, "Client1")
-        self.clientbox1 = ClientBox(13, 50, 2, 80, "Client2")
+        self.clientbox0 = ClientBox(13, 50, 2, 30, "Vision module 1")
+        self.clientbox1 = ClientBox(13, 50, 2, 80, "Vision module 2")
         self.manipulatorbox = ManipulatorBox(13, 78, 16, 2)
         self.logbox = LogBox(14, self.maxx - 4, self.maxy - 14, 2)
 
@@ -41,7 +41,7 @@ class UI():
         self.stop()
 
     def connect_events(self):
-        self.core.sockserver.events.on_connected += self.update_server_status
+        self.core.socket_server.events.on_connected += self.update_server_status
         self.core.events.update_unit0_ui += self.update_client0
         self.core.events.update_manipulator_ui += self.update_manipulator
 

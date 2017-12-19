@@ -14,32 +14,32 @@ class Core(Thread):
 
         self.events = Events()
 
-        self.sockserver = SocketServer("", 50000)
+        self.socket_server = SocketServer("", 50000)
         self.uart = Uart()
         self.manipulator = None
         self.mobile_platform = None
 
         self.unit0 = {}
         self.unit1 = {}
-        self.markerA = 0
-        self.markerB = 0
+        self.TOP_MARKER = 9
+        self.SIDE_MARKER = 16
 
         self.snaps = {
-            "unit0": {"A": [], "B": []},
-            "unit1": {"A": [], "B": []}
+            "unit0": {"TOP_MARKER": [], "SIDE_MARKER": []},
+            "unit1": {"TOP_MARKER": [], "SIDE_MARKER": []}
         }
 
         self.distance = None
 
     def run(self):
-        self.sockserver.start()
+        self.socket_server.start()
         self.uart.start()
 
         self.connect_events()
 
     def connect_events(self):
         self.uart.events.on_connected += self.start_control
-        self.sockserver.events.on_connected += self.referencing_clients_to_core
+        self.socket_server.events.on_connected += self.referencing_clients_to_core
 
     def start_control(self):
         # Only when serial is connected
@@ -62,16 +62,16 @@ class Core(Thread):
     def __stop(self):
         self.manipulator.stop()
         self.uart.stop()
-        self.sockserver.stop()
+        self.socket_server.stop()
         self.join()
 
     # this looks really lame
     def referencing_clients_to_core(self, is_connected):
         if is_connected:
-            self.unit0 = self.sockserver.threads[0]
+            self.unit0 = self.socket_server.threads[0]
             self.unit0.events.on_new_data += self.update_unit0
-            if len(self.sockserver.threads) > 1:
-                self.unit1 = self.sockserver.threads[1]
+            if len(self.socket_server.threads) > 1:
+                self.unit1 = self.socket_server.threads[1]
                 self.unit1.events.on_new_data += self.update_unit1
         else:
             self.unit0 = {}
