@@ -13,7 +13,7 @@ class ClientBox(Box):
 
         self.title(title)
 
-        self.add(1, 7, "MARKER A", self.bold)
+        self.add(1, 5, "TOP MARKER ID: ", self.bold)
 
         self.rot_pos_x_A = 0
         self.rot_pos_y_A = 2
@@ -27,7 +27,7 @@ class ClientBox(Box):
         self.add(self.tran_pos_y_A, self.tran_pos_x_A, "TRANSLATION [MM]")
         self.xyz_data_template(self.tran_pos_y_A, self.tran_pos_x_A, None)
 
-        self.add(1, 31, "MARKER B", self.bold)
+        self.add(1, 28, "SIDE MARKER ID: ", self.bold)
 
         self.rot_pos_x_B = 24
         self.rot_pos_y_B = 2
@@ -66,11 +66,11 @@ class ClientBox(Box):
             self.add(pos_y + 3, pos_x, "%19s" % "N/A")
 
     def show_marker_A_data(self, marker):
-        self.add(1, 7, "MARKER %d" % marker["id"], self.bold)
+        self.add(1, 5, "TOP MARKER ID: %d" % marker["id"], self.bold)
         self.xyz_data_template(self.rot_pos_y_A, self.rot_pos_x_A, marker["rot"])
         self.xyz_data_template(self.tran_pos_y_A, self.tran_pos_x_A, marker["tran"])
 
     def show_marker_B_data(self, marker):
-        self.add(1, 31, "MARKER %d" % marker["id"], self.bold)
+        self.add(1, 28, "SIDE MARKER ID: %d" % marker["id"], self.bold)
         self.xyz_data_template(self.rot_pos_y_B, self.rot_pos_x_B, marker["rot"])
         self.xyz_data_template(self.tran_pos_y_B, self.tran_pos_x_B, marker["tran"])
