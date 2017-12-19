@@ -31,14 +31,15 @@ while True:
     #It's working.
     # my problem was that the cellphone put black all around it. The alrogithm
     # depends very much upon finding rectangular black blobs
-
-    gray = aruco.drawDetectedMarkers(gray, corners, ids)
-
-    rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30, camera_matrix, dist_coeffs)
     colored = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 
-    for i in range(len(rvecs)):
-        gray = aruco.drawAxis(colored, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
+    colored = aruco.drawDetectedMarkers(colored, corners, ids)
+
+    rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30, camera_matrix, dist_coeffs)
+
+    if rvecs:
+        for i in range(len(rvecs)):
+            gray = aruco.drawAxis(colored, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
 
     #print(rejectedImgPoints)
     # Display the resulting frame
