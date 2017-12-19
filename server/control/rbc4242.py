@@ -34,8 +34,8 @@ class RbC4242:
 
     def parse_status(self, response):
         try:
-            logger.debug("RbC %s: Recieved: %s", hex(self._address), binascii.hexlify(response))
-            if binascii.hexlify(response[0:3]) == self.prefix(9):
+            logger.debug("RbC %s: Received: %s", hex(self._address), binascii.hexlify(response))
+            if binascii.hexlify(response[0:3]) == self.prefix():
                 response = response[2:]
                 return {
                     "current1": h.decode(response[13:16]),  # 13, 14, 15
@@ -59,7 +59,7 @@ class RbC4242:
         except IndexError as e:
             logger.error("RbC %s: %s", hex(self._address), e)
 
-    def prefix(self, command):
+    def prefix(self):
         return "ff" + format(self._address, "x") + format(0x6F, "x")
 
 
