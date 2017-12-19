@@ -15,7 +15,6 @@ while True:
     #print(frame.shape) #480x640
     # Our operations on the frame come here
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gray = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
     aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
     parameters =  aruco.DetectorParameters_create()
 
@@ -38,7 +37,7 @@ while True:
     rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30,
                                                               camera_matrix, dist_coeffs)
     for i in range(len(rvecs)):
-        frame = aruco.drawAxis(gray, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
+        frame = aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
 
     #print(rejectedImgPoints)
     # Display the resulting frame
