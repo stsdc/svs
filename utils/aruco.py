@@ -34,14 +34,15 @@ while True:
 
     gray = aruco.drawDetectedMarkers(gray, corners, ids)
 
-    rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30,
-                                                              camera_matrix, dist_coeffs)
+    rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30, camera_matrix, dist_coeffs)
+    colored = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+
     for i in range(len(rvecs)):
-        frame = aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
+        gray = aruco.drawAxis(colored, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 30)
 
     #print(rejectedImgPoints)
     # Display the resulting frame
-    cv2.imshow('Marker detection', frame)
+    cv2.imshow('Marker detection', colored)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
