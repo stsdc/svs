@@ -32,7 +32,7 @@ while True:
     # my problem was that the cellphone put black all around it. The alrogithm
     # depends very much upon finding rectangular black blobs
 
-    gray = aruco.drawDetectedMarkers(gray, corners, ids)
+    frame = aruco.drawDetectedMarkers(frame, corners, ids)
 
     rvecs, tvecs, objpoints = aruco.estimatePoseSingleMarkers(corners, 30,
                                                               camera_matrix, dist_coeffs)
@@ -41,7 +41,7 @@ while True:
 
     #print(rejectedImgPoints)
     # Display the resulting frame
-    cv2.imshow('Marker detection', gray)
+    cv2.imshow('Marker detection', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
