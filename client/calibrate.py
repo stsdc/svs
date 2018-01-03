@@ -35,7 +35,7 @@ class Calibrate(object):
     def take_pictures(self, img):
         decimator = 0
         print "Press space to capture picture"
-        for i in range(30):
+        for i in range(10):
             if cv2.waitKey(0):
                 print "reading %s" % i
                 [markerCorners, markerIds, rejectedImgPoints] = cv2.aruco.detectMarkers(img, self.dict)
