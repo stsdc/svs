@@ -19,7 +19,7 @@ class MarkerDetector(Thread):
         self._stop_event = Event()
 
         self.PATH = "client/calibration.yml"
-        self.MARKER_SIZE = 30
+        self.MARKER_SIZE = 29
 
         self.camera_matrix = None
         self.dist_coeffs = None

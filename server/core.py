@@ -81,5 +81,9 @@ class Core(Thread):
         # self.distance()
         self.events.update_unit0_ui(data["markers"])
 
+    def update_unit1(self, data):
+        # self.distance()
+        self.events.update_unit1_ui(data["markers"])
+
     def update_manipulator_ui(self, data):
         self.events.update_manipulator_ui(data)

@@ -21,7 +21,7 @@ class ClientBox(Box):
         self.tran_pos_x_A = 0
         self.tran_pos_y_A = 7
 
-        self.add(self.rot_pos_y_A, self.rot_pos_x_A, "ROTATION")
+        self.add(self.rot_pos_y_A, self.rot_pos_x_A, "ROTATION [DEG]")
         self.xyz_data_template(self.rot_pos_y_A, self.rot_pos_x_A, None)
 
         self.add(self.tran_pos_y_A, self.tran_pos_x_A, "TRANSLATION [MM]")
@@ -46,9 +46,9 @@ class ClientBox(Box):
         # should make for loop or assign markers to variables
         if len(data) != 0:
             for marker in data:
-                if marker["id"] == 9:
+                if marker["id"] == 1: #9
                     self.show_marker_A_data(marker)
-                elif marker["id"] == 16:
+                elif marker["id"] == 2: # 16
                     self.show_marker_B_data(marker)
 
     def xyz_data_template(self, pos_y, pos_x, data):
@@ -57,9 +57,28 @@ class ClientBox(Box):
         self.add(pos_y + 3, 1, "Z:")
         pos_x = pos_x + 4
         if data:
-            self.add(pos_y + 1, pos_x, "%19s" % data[0])
-            self.add(pos_y + 2, pos_x, "%19s" % data[1])
-            self.add(pos_y + 3, pos_x, "%19s" % data[2])
+            self.add(pos_y + 1, pos_x, "%19d" % round(data[0]))
+            self.add(pos_y + 2, pos_x, "%19d" % round(data[1]))
+            self.add(pos_y + 3, pos_x, "%19d" % round(data[2]))
+        else:
+            self.add(pos_y + 1, pos_x, "%19s" % "N/A")
+            self.add(pos_y + 2, pos_x, "%19s" % "N/A")
+            self.add(pos_y + 3, pos_x, "%19s" % "N/A")
+
+    def xyz_data_template_rot(self, pos_y, pos_x, data):
+        self.add(pos_y + 1, 1, "X:")
+        self.add(pos_y + 2, 1, "Y:")
+        self.add(pos_y + 3, 1, "Z:")
+        pos_x = pos_x + 4
+
+        rotx = round(data[0] * 180 / 3.14)
+        roty = round(data[1] * 180 / 3.14)
+        rotz = round(data[2] * 180 / 3.14)
+
+        if data:
+            self.add(pos_y + 1, pos_x, "%19d" % self.rot_lol(rotx))
+            self.add(pos_y + 2, pos_x, "%19d" % roty)
+            self.add(pos_y + 3, pos_x, "%19d" % rotz)
         else:
             self.add(pos_y + 1, pos_x, "%19s" % "N/A")
             self.add(pos_y + 2, pos_x, "%19s" % "N/A")
@@ -67,10 +86,15 @@ class ClientBox(Box):
 
     def show_marker_A_data(self, marker):
         self.add(1, 5, "TOP MARKER ID: %d" % marker["id"], self.bold)
-        self.xyz_data_template(self.rot_pos_y_A, self.rot_pos_x_A, marker["rot"])
+        self.xyz_data_template_rot(self.rot_pos_y_A, self.rot_pos_x_A, marker["rot"])
         self.xyz_data_template(self.tran_pos_y_A, self.tran_pos_x_A, marker["tran"])
 
     def show_marker_B_data(self, marker):
         self.add(1, 28, "SIDE MARKER ID: %d" % marker["id"], self.bold)
-        self.xyz_data_template(self.rot_pos_y_B, self.rot_pos_x_B, marker["rot"])
+        self.xyz_data_template_rot(self.rot_pos_y_B, self.rot_pos_x_B, marker["rot"])
         self.xyz_data_template(self.tran_pos_y_B, self.tran_pos_x_B, marker["tran"])
+
+    def rot_lol(self, rotx):
+        if rotx < 0:
+            return 180 + rotx
+        return rotx
