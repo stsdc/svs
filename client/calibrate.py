@@ -54,7 +54,6 @@ class Calibrate(object):
         try:
             [ret, cam_matrix, dist_coeffs, rvecs, tvecs] = cv2.aruco.calibrateCameraCharuco(
                 self.all_ch_corners, self.all_ch_ids, self.board, self.img_size, None, None)
-            print "Rep Error:", ret
             self.saveCameraParams(cam_matrix, dist_coeffs, ret)
 
         except ValueError as e:
@@ -67,7 +66,10 @@ class Calibrate(object):
             print "calibrateCameraCharuco fail:", sys.exc_info()[0]
 
     def saveCameraParams(self, cam_matrix, dist_coeffs, ret):
+        print "Rep Error:", ret
         print(cam_matrix)
+        print ""
+        print(dist_coeffs)
 
         calib_data = dict(
             image_width=self.img_size[0],
