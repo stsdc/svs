@@ -78,7 +78,12 @@ class Calibrate(object):
         )
 
         with open(self.filename, 'w') as outfile:
-            yaml.dump(calib_data, outfile)
+            print "Saving calibration data"
+            try:
+                yaml.dump(calib_data, outfile)
+                print "Saved."
+            except BaseException as e:
+                print e
 
 
 class Video(Thread):

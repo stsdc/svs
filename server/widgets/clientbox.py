@@ -56,10 +56,15 @@ class ClientBox(Box):
         self.add(pos_y + 2, 1, "Y:")
         self.add(pos_y + 3, 1, "Z:")
         pos_x = pos_x + 4
+
         if data:
-            self.add(pos_y + 1, pos_x, "%19d" % round(data[0]))
-            self.add(pos_y + 2, pos_x, "%19d" % round(data[1]))
-            self.add(pos_y + 3, pos_x, "%19d" % round(data[2]))
+            tranx = round(data[0])
+            trany = round(data[1])
+            tranz = round(data[2]) + 20
+
+            self.add(pos_y + 1, pos_x, "%19d" % tranx)
+            self.add(pos_y + 2, pos_x, "%19d" % trany)
+            self.add(pos_y + 3, pos_x, "%19d" % tranz)
         else:
             self.add(pos_y + 1, pos_x, "%19s" % "N/A")
             self.add(pos_y + 2, pos_x, "%19s" % "N/A")
