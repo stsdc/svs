@@ -11,8 +11,8 @@ class Calibrate(object):
 
     def __init__(self):
         self.dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
-        square_length = 40
-        marker_length = 30
+        square_length = 4
+        marker_length = 3
         rows = 7
         columns = 5
         self.board = aruco.CharucoBoard_create(
